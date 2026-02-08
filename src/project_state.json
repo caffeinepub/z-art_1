@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 7,
+  "summary": "Artwork gallery app \"Z'art\" where an admin can upload artworks with title/description/GBP price, view them in a gallery, tap to view full display, and automatically resize oversized images on upload.",
+  "architectural_notes": [
+    "Store artwork metadata: title, description, price (GBP) alongside image asset.",
+    "Implement automatic image resizing/compression during upload to handle oversized images.",
+    "Split frontend routes/views: public gallery browsing vs admin-only upload page; ensure upload page is only accessible/visible to admin users."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-set-the-application-name-to-z-art-and-reflect-it-consistently-in-the-ui-header-title-and-any-app-metadata-used-by-the-frontend",
+      "title": "Set the application name to \"Z'art\" and reflect it consistently in the UI (header/title) and any app metadata used by the frontend.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-frontend-gallery-browsing-display-artworks-in-a-responsive-grid-with-thumbnail-preview-title-and-gbp-price-when-a-user-taps-clicks-an-artwork-card-open-a-full-artwork-view-that-shows-the-image-fully-along-with-title-description-and-formatted-gbp-price",
+      "title": "Implement frontend gallery browsing: display artworks in a responsive grid with thumbnail/preview, title, and GBP price. When a user taps/clicks an artwork card, open a full artwork view that shows the image fully along with title, description, and formatted GBP price.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-admin-only-upload-workflow-in-the-frontend-an-upload-form-for-title-description-gbp-price-input-and-image-file-selection-show-this-ui-only-when-the-authenticated-user-is-the-admin-as-determined-by-the-backend",
+      "title": "Implement an admin-only upload workflow in the frontend: an upload form for title, description, GBP price input, and image file selection; show this UI only when the authenticated user is the admin (as determined by the backend).",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-automatically-resize-oversized-images-on-the-client-before-upload-when-an-admin-selects-an-image-larger-than-a-defined-maximum-dimension-and-or-file-size-resize-it-preserving-aspect-ratio-and-compress-it-to-a-reasonable-jpeg-webp-quality-before-sending-to-the-backend",
+      "title": "Automatically resize oversized images on the client before upload: when an admin selects an image larger than a defined maximum dimension and/or file size, resize it (preserving aspect ratio) and compress it to a reasonable JPEG/WEBP quality before sending to the backend.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-cohesive-visual-theme-suitable-for-an-artwork-gallery-non-blue-non-purple-primary-palette-including-typography-spacing-and-card-detail-view-styling-and-use-it-consistently-across-gallery-detail-view-and-admin-upload-ui",
+      "title": "Apply a cohesive visual theme suitable for an artwork gallery (non-blue/non-purple primary palette), including typography, spacing, and card/detail view styling, and use it consistently across gallery, detail view, and admin upload UI.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-required-static-brand-images-and-render-them-in-the-ui-from-frontend-static-assets-do-not-serve-generated-images-through-the-backend",
+      "title": "Generate required static brand images and render them in the UI from frontend static assets (do not serve generated images through the backend).",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-split-the-admin-artwork-upload-ui-into-a-dedicated-upload-page-view-so-the-gallery-view-no-longer-contains-the-upload-form",
+      "title": "Split the admin artwork upload UI into a dedicated upload page/view, so the gallery view no longer contains the upload form.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-in-app-navigation-to-access-the-separate-upload-page-and-back-to-gallery-showing-the-upload-navigation-entry-only-to-authenticated-admins-prevent-non-admin-users-from-accessing-the-upload-page",
+      "title": "Add in-app navigation to access the separate Upload page and back to Gallery, showing the Upload navigation entry only to authenticated admins; prevent non-admin users from accessing the Upload page.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Create app named \"Z'art\" (artwork gallery)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Admin role: make the user an admin",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Artwork uploads include title, description, and price in GBP",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Gallery view: display uploaded artworks and open full display when tapped",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Automatically resize oversized images on upload",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Implement admin identification so that the first authenticated Internet Identity principal becomes the admin automatically, and persist this admin principal in stable backend state. Provide a backend method to query whether the caller is admin.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Create backend CRUD endpoints for artworks with the following fields: id, title, description, price in GBP (stored as integer minor units/pence), image content, image content type, created timestamp, and owner/uploader principal. Restrict creation (upload) to admin callers.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Separate the admin artwork uploading page from the public gallery view (dedicated upload route/page rather than combined UI)",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Z'art",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

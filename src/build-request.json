@@ -1,0 +1,68 @@
+{
+  "kind": "build_request",
+  "title": "Separate admin artwork upload into a dedicated page (separate from gallery view)",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-9",
+      "text": "Split the admin artwork upload UI into a dedicated upload page/view, so the gallery view no longer contains the upload form.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-messages-user-1"
+        ],
+        "quotes": [
+          "Separate the Artwork uploading page from the gallery view"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When visiting the default view, the user sees the Gallery content without the admin upload form rendered on the same page.",
+        "There is a distinct Upload view/page that renders the existing AdminUploadForm component.",
+        "The existing gallery browsing behavior (grid + artwork detail dialog) remains available and unchanged from the default Gallery view."
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Add in-app navigation to access the separate Upload page and back to Gallery, showing the Upload navigation entry only to authenticated admins; prevent non-admin users from accessing the Upload page.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-messages-user-1"
+        ],
+        "quotes": [
+          "Separate the Artwork uploading page from the gallery view"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Header provides a clear navigation option to go to “Gallery” at all times.",
+        "Header provides a clear navigation option to go to “Upload” only when the user is authenticated and the backend admin check returns true.",
+        "If a non-admin (or unauthenticated) user manually navigates to the Upload page URL/state, the app shows an English access-denied message and a way to return to Gallery (and does not render AdminUploadForm).",
+        "Navigating between Gallery and Upload does not break authentication, profile setup flow, or artwork fetching (React Query continues to work)."
+      ]
+    }
+  ],
+  "constraints": [
+    "Frontend must not modify any paths listed in frontend.immutablePaths (must compose existing UI components rather than editing them).",
+    "Do not introduce additional backend services or databases; keep changes within the existing React + Motoko single-actor setup.",
+    "Use English for any user-facing text."
+  ],
+  "nonGoals": [
+    "Changing backend authorization/admin logic or how admin status is determined.",
+    "Adding new artwork fields, categories, purchasing, payments, or other new product features.",
+    "Redesigning the existing AdminUploadForm functionality beyond moving it into a separate page/view."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

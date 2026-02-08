@@ -1,0 +1,50 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-split-the-admin-artwork-upload-ui-into-a-dedicated-upload-page-view-so-the-gallery-view-no-longer-contains-the-upload-form",
+      "featureTitle": "Split the admin artwork upload UI into a dedicated upload page/view, so the gallery view no longer contains the upload form.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/views/GalleryView.tsx",
+        "frontend/src/views/UploadView.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-in-app-navigation-to-access-the-separate-upload-page-and-back-to-gallery-showing-the-upload-navigation-entry-only-to-authenticated-admins-prevent-non-admin-users-from-accessing-the-upload-page",
+      "featureTitle": "Add in-app navigation to access the separate Upload page and back to Gallery, showing the Upload navigation entry only to authenticated admins; prevent non-admin users from accessing the Upload page.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AccessDenied.tsx",
+        "frontend/src/components/AppHeaderNav.tsx",
+        "frontend/src/hooks/useRoute.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-10"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
