@@ -16,7 +16,7 @@ export default function App() {
   const { identity } = useInternetIdentity();
   const { route } = useRoute();
   const { data: artworks = [], isLoading: artworksLoading } = useGetAllArtworks();
-  const { data: isAdmin, isLoading: adminLoading } = useIsAdmin();
+  const { data: isAdmin } = useIsAdmin();
   const { data: userProfile, isLoading: profileLoading, isFetched: profileFetched } = useGetCallerUserProfile();
   const { mutate: saveProfile } = useSaveCallerUserProfile();
 
@@ -42,13 +42,10 @@ export default function App() {
     });
   };
 
-  // Determine if user can access upload page
-  const canAccessUpload = isAuthenticated && isAdmin && !adminLoading;
-
   // Render appropriate view based on route
   const renderView = () => {
     if (route === 'upload') {
-      if (!isAuthenticated || !canAccessUpload) {
+      if (!isAuthenticated) {
         return <AccessDenied />;
       }
       return <UploadView />;
@@ -59,6 +56,7 @@ export default function App() {
         artworks={artworks}
         isLoading={artworksLoading}
         isAdmin={!!isAdmin}
+        showUploadShortcut={isAuthenticated}
         onArtworkClick={setSelectedArtwork}
       />
     );

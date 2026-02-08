@@ -1,63 +1,22 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Dedicated admin Upload page with guarded navigation (separate from Gallery)",
+  "title": "Remove authenticated-only Upload button from header navigation",
   "requirements": [
     {
-      "id": "REQ-9",
-      "summary": "Move the existing admin artwork upload form off the default Gallery view into a dedicated Upload view while keeping gallery browsing unchanged.",
+      "id": "REQ-24",
+      "summary": "Stop rendering the authenticated-only \"Upload\" button in the app header navigation while keeping routing and upload access unchanged.",
       "acceptanceCriteria": [
-        "When visiting the default view, the user sees the Gallery content without the admin upload form rendered on the same page.",
-        "There is a distinct Upload view/page that renders the existing AdminUploadForm component.",
-        "The existing gallery browsing behavior (grid + artwork detail dialog) remains available and unchanged from the default Gallery view."
+        "When authenticated, the App header navigation no longer shows the \"Upload\" button (the second <button> in the <nav>).",
+        "When unauthenticated, the App header navigation still shows the \"Gallery\" button and the Login/Logout control continues to work.",
+        "All other routes and upload access behavior remain unchanged (users can still access the Upload view via existing routing mechanisms).",
+        "All user-facing text remains in English."
       ],
       "file_operations": [
-        {
-          "path": "frontend/src/views/GalleryView.tsx",
-          "operation": "create",
-          "description": "Create a GalleryView component that contains the current gallery UI (title/description, artwork grid, empty/loading states) and keeps the existing ArtworkDetailDialog behavior via props/state wiring from App."
-        },
-        {
-          "path": "frontend/src/views/UploadView.tsx",
-          "operation": "create",
-          "description": "Create an UploadView component that renders the existing AdminUploadForm (no functional changes to AdminUploadForm itself) and provides page-level layout/heading consistent with the app theme."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Refactor App to render GalleryView as the default view and remove AdminUploadForm from the default gallery rendering. Wire the new UploadView into the app’s view selection so Gallery remains the default and the detail dialog behavior remains intact."
-        }
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "summary": "Add header navigation between Gallery and Upload, showing Upload only for authenticated admins and blocking non-admin access to Upload with an access-denied screen.",
-      "acceptanceCriteria": [
-        "Header provides a clear navigation option to go to “Gallery” at all times.",
-        "Header provides a clear navigation option to go to “Upload” only when the user is authenticated and the backend admin check returns true.",
-        "If a non-admin (or unauthenticated) user manually navigates to the Upload page URL/state, the app shows an English access-denied message and a way to return to Gallery (and does not render AdminUploadForm).",
-        "Navigating between Gallery and Upload does not break authentication, profile setup flow, or artwork fetching (React Query continues to work)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useRoute.ts",
-          "operation": "create",
-          "description": "Create a minimal hash-based routing hook (e.g., Gallery vs Upload) that reads/writes navigation state from window.location.hash and listens for hash changes, enabling manual URL/state navigation without adding a routing library."
-        },
         {
           "path": "frontend/src/components/AppHeaderNav.tsx",
-          "operation": "create",
-          "description": "Create a header navigation component that always shows a “Gallery” nav action and conditionally shows “Upload” only when authenticated and admin status is true. Use the existing authorization-related hooks (useInternetIdentity + useIsAdmin) to drive gating. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/AccessDenied.tsx",
-          "operation": "create",
-          "description": "Create an AccessDenied component that displays an English access-denied message and a clear action to return to Gallery; ensure it never renders AdminUploadForm content."
-        },
-        {
-          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Wire route state into App: (1) render AppHeaderNav in the header; (2) render UploadView only when route=upload AND the user is authenticated AND useIsAdmin resolves true; (3) otherwise render AccessDenied for route=upload; (4) keep profile setup dialog and React Query data fetching flows intact. Use the authorization component’s admin-check capability via useIsAdmin to guard both navigation visibility and page access. Verify the component's usage instructions before implementing."
+          "description": "Remove rendering of the authenticated-only Upload navigation button (the second <Button> within the <nav>) so it no longer appears in the header. Limit changes strictly to this button block to comply with the XPath-scoped constraint; keep the Gallery button and existing routing behavior intact, and avoid edits under frontend/src/components/ui."
         }
       ]
     }

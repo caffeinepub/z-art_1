@@ -1,45 +1,24 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-08T18:08:52.212Z",
+  "generatedAt": "2026-02-08T19:09:35.736Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-10",
-        "summary": "Add in-app navigation to access the separate Upload page and back to Gallery, showing the Upload navigation entry only to authenticated admins; prevent non-admin users from accessing the Upload page.",
+        "id": "REQ-24",
+        "summary": "Remove the header navigation button at XPath /html[1]/body[1]/div[1]/div[1]/header[1]/div[1]/div[2]/nav[1]/button[2] so it no longer renders in the app header navigation (this is the authenticated-only \"Upload\" button in the header nav).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useRoute.ts",
-          "frontend/src/components/AppHeaderNav.tsx",
-          "frontend/src/components/AccessDenied.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/components/AppHeaderNav.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useRoute.ts",
-          "frontend/src/components/AppHeaderNav.tsx",
-          "frontend/src/components/AccessDenied.tsx",
-          "frontend/src/App.tsx"
-        ]
-      },
-      {
-        "id": "REQ-9",
-        "summary": "Split the admin artwork upload UI into a dedicated upload page/view, so the gallery view no longer contains the upload form.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/views/GalleryView.tsx",
-          "frontend/src/views/UploadView.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/views/GalleryView.tsx",
-          "frontend/src/views/UploadView.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/components/AppHeaderNav.tsx"
         ]
       }
     ]
@@ -49,12 +28,7 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/components/AccessDenied.tsx",
     "frontend/src/components/AppHeaderNav.tsx",
-    "frontend/src/hooks/useRoute.ts",
-    "frontend/src/views/GalleryView.tsx",
-    "frontend/src/views/UploadView.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

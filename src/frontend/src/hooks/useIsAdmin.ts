@@ -3,15 +3,23 @@ import { useActor } from './useActor';
 import { useInternetIdentity } from './useInternetIdentity';
 
 export function useIsAdmin() {
-  const { actor, isFetching } = useActor();
+  const { actor, isFetching: actorFetching } = useActor();
   const { identity } = useInternetIdentity();
 
-  return useQuery<boolean>({
-    queryKey: ['isAdmin', identity?.getPrincipal().toString()],
+  const query = useQuery<boolean>({
+    queryKey: ['isCallerAdmin', identity?.getPrincipal().toString()],
     queryFn: async () => {
-      if (!actor) return false;
-      return actor.isAdmin();
+      if (!actor) throw new Error('Actor not available');
+      return actor.isCallerAdmin();
     },
-    enabled: !!actor && !isFetching && !!identity,
+    enabled: !!actor && !actorFetching && !!identity,
+    retry: false,
   });
+
+  // Return custom state that properly reflects actor dependency
+  return {
+    ...query,
+    isLoading: actorFetching || query.isLoading,
+    isFetched: !!actor && query.isFetched,
+  };
 }

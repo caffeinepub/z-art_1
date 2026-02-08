@@ -1,9 +1,9 @@
 {
-  "frontend/src/App.tsx": "Main application component with hash-based routing that renders either GalleryView or UploadView based on route, with access control for the upload page and preserved authentication/profile setup flows.",
+  "frontend/src/App.tsx": "Main application component with hash-based routing that renders either GalleryView or UploadView based on route, with authentication-based access control for the upload page (no admin check required), preserved authentication/profile setup flows, and showUploadShortcut boolean that shows for all authenticated users.",
   "frontend/src/hooks/useQueries.ts": "React Query hooks for fetching artworks list, individual artwork details, creating artworks, and managing user profiles with proper cache invalidation.",
-  "frontend/src/hooks/useIsAdmin.ts": "Hook that queries the backend to determine if the current authenticated user has admin privileges.",
+  "frontend/src/hooks/useIsAdmin.ts": "Hook that queries the backend using isCallerAdmin() to determine if the current authenticated user has admin privileges, with proper loading state that accounts for actor initialization and identity availability.",
   "frontend/src/components/LoginButton.tsx": "Authentication button component that handles Internet Identity login/logout with loading states and query cache clearing on logout.",
-  "frontend/src/components/AdminUploadForm.tsx": "Admin-only form for uploading artworks with title, description, GBP price, and image file selection, including client-side image optimization and upload progress tracking with proper type conversion for ExternalBlob.",
+  "frontend/src/components/AdminUploadForm.tsx": "Form component for uploading artworks with title, description, GBP price, and image file selection, including client-side image optimization and upload progress tracking with proper type conversion for ExternalBlob, available to all authenticated users.",
   "frontend/src/components/ArtworkCard.tsx": "Reusable card component displaying artwork thumbnail, title, and formatted GBP price with hover effects for gallery grid.",
   "frontend/src/components/ArtworkDetailDialog.tsx": "Modal dialog that displays full artwork image, title, description, formatted price, and creation date in a two-column layout.",
   "frontend/src/components/ProfileSetupDialog.tsx": "Modal dialog that prompts new users to enter their name on first login, required before accessing the application.",
@@ -12,8 +12,8 @@
   "frontend/src/index.css": "Global styles with warm gallery-appropriate OKLCH color palette (avoiding blue/purple), custom serif font for headings, and subtle background texture support.",
   "frontend/tailwind.config.js": "Tailwind configuration extended with Playfair Display serif font, warm color tokens, custom shadows, and gallery-appropriate design system.",
   "frontend/src/hooks/useRoute.ts": "Simple hash-based routing hook that manages navigation between gallery and upload routes using window.location.hash.",
-  "frontend/src/views/GalleryView.tsx": "Gallery view component that displays the artwork grid with loading and empty states, accepting artworks and click handlers as props.",
-  "frontend/src/views/UploadView.tsx": "Upload view component that renders the AdminUploadForm with a page-level heading and description.",
-  "frontend/src/components/AppHeaderNav.tsx": "Header navigation component that displays Gallery and Upload navigation buttons using LayoutGrid and Upload icons from lucide-react, with Upload only visible to authenticated admins.",
-  "frontend/src/components/AccessDenied.tsx": "Access denied component that displays an error message and return-to-gallery button when non-admin users try to access the upload page."
+  "frontend/src/views/GalleryView.tsx": "Gallery view component that displays the upload shortcut card with prominent styling for authenticated users, followed by the artwork grid with loading and empty states; the inline AdminUploadForm has been removed.",
+  "frontend/src/views/UploadView.tsx": "Upload view component that renders the AdminUploadForm with a page-level heading and description welcoming all authenticated users to share their art.",
+  "frontend/src/components/AppHeaderNav.tsx": "Header navigation component that displays only the Gallery navigation button using LayoutGrid icon from lucide-react, with the Upload button removed from the header while routing and upload access remain unchanged.",
+  "frontend/src/components/AccessDenied.tsx": "Access denied component that displays a login-required message and return-to-gallery button when unauthenticated users try to access the upload page."
 }

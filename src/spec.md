@@ -1,12 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Move the admin artwork upload experience into a dedicated Upload page so the default view remains focused on gallery browsing.
+**Goal:** Remove the authenticated-only "Upload" button from the app header navigation without changing upload access or routing.
 
 **Planned changes:**
-- Update the default view to render only the Gallery content (grid + artwork detail dialog) and remove the admin upload form from that view.
-- Add a separate Upload page/view that renders the existing `AdminUploadForm` component.
-- Add header navigation to switch between “Gallery” (always visible) and “Upload” (visible only to authenticated admins).
-- Gate the Upload page so non-admin or unauthenticated users see an English access-denied message and a way to return to Gallery, without rendering `AdminUploadForm`.
+- Remove the second `<button>` in the header `<nav>` (the authenticated "Upload" button) so it no longer renders.
+- Keep the existing "Gallery" button and Login/Logout control behavior unchanged for both authenticated and unauthenticated users.
 
-**User-visible outcome:** Users land on a Gallery-only view for browsing artworks, while authenticated admins can navigate to a separate Upload page to upload new artwork; non-admins cannot access the Upload page.
+**User-visible outcome:** When signed in, the header no longer shows an "Upload" button, while the rest of the navigation and login/logout behavior remains the same and the Upload view is still accessible through existing routes.

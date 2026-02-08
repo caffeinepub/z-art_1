@@ -102,7 +102,7 @@ export default function AdminUploadForm() {
     <Card className="border-2">
       <CardHeader>
         <CardTitle className="text-2xl font-serif font-light">Upload Artwork</CardTitle>
-        <CardDescription>Add a new piece to the gallery</CardDescription>
+        <CardDescription>Share your art with the gallery</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -160,14 +160,14 @@ export default function AdminUploadForm() {
                       type="button"
                       variant="secondary"
                       size="sm"
-                      className="absolute top-2 right-2"
                       onClick={() => {
                         setImageFile(null);
                         setImagePreview(null);
                       }}
+                      className="absolute top-2 right-2"
                       disabled={isSubmitting}
                     >
-                      Change
+                      Remove
                     </Button>
                   </div>
                 ) : (
@@ -176,10 +176,12 @@ export default function AdminUploadForm() {
                     className="flex flex-col items-center justify-center aspect-square cursor-pointer"
                   >
                     <ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
-                    <span className="text-sm text-muted-foreground">Click to upload image</span>
+                    <span className="text-sm text-muted-foreground text-center">
+                      Click to select an image
+                    </span>
                   </label>
                 )}
-                <Input
+                <input
                   id="image"
                   type="file"
                   accept="image/*"
@@ -191,7 +193,26 @@ export default function AdminUploadForm() {
             </div>
           </div>
 
-          <Button type="submit" disabled={isSubmitting} className="w-full gap-2">
+          {uploadProgress > 0 && uploadProgress < 100 && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Uploading...</span>
+                <span>{uploadProgress}%</span>
+              </div>
+              <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-primary h-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            className="w-full gap-2"
+            disabled={isSubmitting}
+          >
             {isOptimizing ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -200,7 +221,7 @@ export default function AdminUploadForm() {
             ) : isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Uploading... {uploadProgress > 0 && `${uploadProgress}%`}
+                Uploading...
               </>
             ) : (
               <>

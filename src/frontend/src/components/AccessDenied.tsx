@@ -13,9 +13,9 @@ export default function AccessDenied() {
           <div className="flex justify-center mb-4">
             <ShieldAlert className="h-16 w-16 text-destructive" />
           </div>
-          <CardTitle className="text-2xl font-serif font-light">Access Denied</CardTitle>
+          <CardTitle className="text-2xl font-serif font-light">Login Required</CardTitle>
           <CardDescription>
-            You do not have permission to access this page. Only administrators can upload artworks.
+            Please log in to upload artworks to the gallery.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center">

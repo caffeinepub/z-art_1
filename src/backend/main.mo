@@ -22,7 +22,6 @@ actor {
 
   public type UserProfile = {
     name : Text;
-    // Additional user metadata
   };
 
   public type Purchase = {
@@ -35,7 +34,6 @@ actor {
   public type Wallet = {
     owner : Principal;
     balance : Nat;
-    // Additional wallet metadata
   };
 
   let artworks = Map.empty<Text, Artwork>();
@@ -81,8 +79,8 @@ actor {
     image : Storage.ExternalBlob;
     imageType : Text;
   }) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admin can upload artworks");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can upload artworks");
     };
     if (artworks.containsKey(artwork.id)) {
       Runtime.trap("Artwork with this ID already exists");
@@ -103,12 +101,10 @@ actor {
   };
 
   public query ({ caller }) func getArtwork(id : Text) : async ?Artwork {
-    // No authorization check needed - any user including guests can view artworks
     artworks.get(id);
   };
 
   public query func listArtworks() : async [(Text, Artwork)] {
-    // No authorization check needed - any user including guests can list artworks
     artworks.toArray();
   };
 
@@ -123,8 +119,6 @@ actor {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can transfer artworks");
     };
-    // Placeholder for actual transfer logic
-    // This function is kept as a stub to maintain the interface
   };
 
   public shared ({ caller }) func updateArtwork(id : Text, updatedArtwork : {
