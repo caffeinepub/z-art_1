@@ -17,6 +17,7 @@ export interface Artwork {
   'owner' : Principal,
   'createdAt' : Time,
   'description' : string,
+  'isSold' : boolean,
   'image' : ExternalBlob,
   'price' : bigint,
 }
@@ -78,6 +79,7 @@ export interface _SERVICE {
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'listArtworks' : ActorMethod<[], Array<[string, Artwork]>>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'setArtworkSoldStatus' : ActorMethod<[string, boolean], undefined>,
   'transferArtwork' : ActorMethod<[string, Principal], undefined>,
   'updateArtwork' : ActorMethod<
     [

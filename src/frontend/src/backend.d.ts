@@ -22,6 +22,7 @@ export interface Artwork {
     owner: Principal;
     createdAt: Time;
     description: string;
+    isSold: boolean;
     image: ExternalBlob;
     price: bigint;
 }
@@ -53,7 +54,8 @@ export interface backendInterface {
     isCallerAdmin(): Promise<boolean>;
     listArtworks(): Promise<Array<[string, Artwork]>>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    transferArtwork(_artworkId: string, _recipient: Principal): Promise<void>;
+    setArtworkSoldStatus(artworkId: string, isSold: boolean): Promise<void>;
+    transferArtwork(artworkId: string, recipient: Principal): Promise<void>;
     updateArtwork(id: string, updatedArtwork: {
         title: string;
         imageType: string;

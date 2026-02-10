@@ -1,49 +1,97 @@
 {
   "kind": "build_request",
-  "title": "Remove the header navigation Upload button (selected element)",
+  "title": "Enable editing of all artwork upload fields and add SOLD watermark display option",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-24",
-      "text": "Remove the header navigation button at XPath /html[1]/body[1]/div[1]/div[1]/header[1]/div[1]/div[2]/nav[1]/button[2] so it no longer renders in the app header navigation (this is the authenticated-only \"Upload\" button in the header nav).",
+      "id": "REQ-1",
+      "text": "Add an artwork editing flow that allows a signed-in user to edit all fields that are available on upload (title, description, price, and image), reusing the existing Upload page UI.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "Retry\nThe user has selected the following 1 element from the page for context.\n...\n- XPath:\n/html[1]/body[1]/div[1]/div[1]/header[1]/div[1]/div[2]/nav[1]/button[2]"
+          "Enable editing of all upload fields"
         ]
       },
       "acceptanceCriteria": [
-        "When authenticated, the App header navigation no longer shows the \"Upload\" button (the second <button> in the <nav>).",
-        "When unauthenticated, the App header navigation still shows the \"Gallery\" button and the Login/Logout control continues to work.",
-        "All other routes and upload access behavior remain unchanged (users can still access the Upload view via existing routing mechanisms).",
-        "All user-facing text remains in English."
+        "From the Gallery, a user can start editing an existing artwork and is taken to the Upload page in an explicit “Edit” mode.",
+        "In Edit mode, the form is pre-filled with the existing artwork title, description, and price.",
+        "In Edit mode, the user can optionally replace the image (including preview, remove/replace behaviors, and client-side optimization).",
+        "Submitting in Edit mode updates the existing artwork and returns the user to the Gallery with the updated values visible without a hard refresh.",
+        "Submitting in Create mode continues to create a new artwork as it does today."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Extend React Query hooks to support updating an existing artwork, and wire the Upload/Edit form submission to call the correct mutation (create vs update) with proper cache invalidation.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Enable editing of all upload fields"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A new update mutation exists alongside the existing create mutation in the query layer.",
+        "After a successful update, the artworks list query is invalidated/refetched so edited cards reflect new data.",
+        "Error states during update show an English error toast message and do not clear the form unintentionally."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Update backend authorization so that editing an artwork is permitted for the artwork owner as well as admins, while preserving existing security checks for other operations.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Enable editing of all upload fields"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Calling updateArtwork succeeds when the caller is the owner of the artwork.",
+        "Calling updateArtwork succeeds when the caller is an admin.",
+        "Calling updateArtwork traps with an authorization error when the caller is neither the owner nor an admin.",
+        "The update preserves immutable fields (id, createdAt, owner) and preserves existing isSold status."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Add a “SOLD” watermark display option in the UI so that sold artworks can optionally render a watermark overlay on the image (instead of only the small SOLD badge).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "add a SOLD watermark option"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The Gallery view provides a clearly labeled control to choose how sold status is displayed (at minimum: Badge vs Watermark).",
+        "When Watermark is selected and an artwork isSold=true, the artwork image shows a large, semi-transparent, diagonal “SOLD” watermark overlay.",
+        "When Badge is selected and an artwork isSold=true, the existing small “SOLD” badge behavior remains.",
+        "The chosen option applies consistently to both the artwork card grid and the artwork detail dialog during the session (and should persist across reloads via local storage or an equivalent frontend-only persistence)."
       ]
     }
   ],
   "constraints": [
-    "Apply changes ONLY to the selected element at XPath /html[1]/body[1]/div[1]/div[1]/header[1]/div[1]/div[2]/nav[1]/button[2].",
-    "Do not edit files under frontend/src/components/ui or any other immutable paths listed in SYSTEM_CONTEXT."
+    "Backend must remain a single Motoko actor in backend/main.mo; only add migration.mo changes if state shape must change (not expected for this request).",
+    "Do not edit files under frontend/src/components/ui or any path listed in frontend.immutablePaths.",
+    "Use English for all user-facing text."
   ],
   "nonGoals": [
-    "Do not change backend authorization or artwork upload behavior.",
-    "Do not redesign or otherwise modify header layout beyond removing the selected Upload button.",
-    "Do not add new navigation entries or routes."
+    "Adding third-party authentication providers (only Internet Identity is supported).",
+    "Implementing image processing/watermarking on the backend (the watermark option is a display overlay in the UI).",
+    "Adding external databases or services."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

@@ -1,16 +1,24 @@
-import { useState } from 'react';
-import { useCreateArtwork } from '../hooks/useQueries';
+import { useState, useEffect } from 'react';
+import { useCreateArtwork, useUpdateArtwork } from '../hooks/useQueries';
+import { useRoute } from '../hooks/useRoute';
 import { ExternalBlob } from '../backend';
+import type { Artwork } from '../backend';
 import { optimizeImage } from '../utils/imageOptimize';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, Loader2, ImageIcon } from 'lucide-react';
+import { Upload, Loader2, ImageIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function AdminUploadForm() {
+interface AdminUploadFormProps {
+  artwork?: Artwork | null;
+}
+
+export default function AdminUploadForm({ artwork }: AdminUploadFormProps) {
+  const isEditMode = !!artwork;
+  
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priceGBP, setPriceGBP] = useState('');
@@ -18,19 +26,40 @@ export default function AdminUploadForm() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [imageReplaced, setImageReplaced] = useState(false);
 
-  const { mutate: createArtwork, isPending } = useCreateArtwork();
+  const { mutate: createArtwork, isPending: isCreating } = useCreateArtwork();
+  const { mutate: updateArtwork, isPending: isUpdating } = useUpdateArtwork();
+  const { navigate } = useRoute();
+
+  // Prefill form when in edit mode
+  useEffect(() => {
+    if (artwork) {
+      setTitle(artwork.title);
+      setDescription(artwork.description);
+      setPriceGBP((Number(artwork.price) / 100).toFixed(2));
+      setImagePreview(artwork.image.getDirectURL());
+      setImageReplaced(false);
+    }
+  }, [artwork]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setImageFile(file);
+      setImageReplaced(true);
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setImageReplaced(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,63 +75,121 @@ export default function AdminUploadForm() {
       return;
     }
 
-    if (!imageFile) {
+    // For create mode, image is required
+    // For edit mode, image is only required if it was removed
+    if (!isEditMode && !imageFile) {
+      toast.error('Please select an image');
+      return;
+    }
+
+    if (isEditMode && !imagePreview) {
       toast.error('Please select an image');
       return;
     }
 
     try {
-      setIsOptimizing(true);
-      const { bytes, mimeType } = await optimizeImage(imageFile);
-      setIsOptimizing(false);
-
       const priceInPence = BigInt(Math.round(parseFloat(priceGBP) * 100));
-      const id = `artwork-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      let imageBlob: ExternalBlob;
+      let imageType: string;
 
-      // Convert to the correct Uint8Array type expected by ExternalBlob
-      const typedBytes = new Uint8Array(bytes.buffer) as Uint8Array<ArrayBuffer>;
-      const blob = ExternalBlob.fromBytes(typedBytes).withUploadProgress((percentage) => {
-        setUploadProgress(percentage);
-      });
+      // If image was replaced or this is create mode, optimize and upload new image
+      if (imageFile && (imageReplaced || !isEditMode)) {
+        setIsOptimizing(true);
+        const { bytes, mimeType } = await optimizeImage(imageFile);
+        setIsOptimizing(false);
 
-      createArtwork(
-        {
-          id,
-          title: title.trim(),
-          description: description.trim(),
-          price: priceInPence,
-          image: blob,
-          imageType: mimeType,
-        },
-        {
-          onSuccess: () => {
-            toast.success('Artwork uploaded successfully!');
-            setTitle('');
-            setDescription('');
-            setPriceGBP('');
-            setImageFile(null);
-            setImagePreview(null);
-            setUploadProgress(0);
+        const typedBytes = new Uint8Array(bytes.buffer) as Uint8Array<ArrayBuffer>;
+        imageBlob = ExternalBlob.fromBytes(typedBytes).withUploadProgress((percentage) => {
+          setUploadProgress(percentage);
+        });
+        imageType = mimeType;
+      } else if (isEditMode && artwork) {
+        // Use existing image
+        imageBlob = artwork.image;
+        imageType = artwork.imageType;
+      } else {
+        toast.error('Image is required');
+        return;
+      }
+
+      if (isEditMode && artwork) {
+        // Update existing artwork
+        updateArtwork(
+          {
+            id: artwork.id,
+            artwork: {
+              title: title.trim(),
+              description: description.trim(),
+              price: priceInPence,
+              image: imageBlob,
+              imageType: imageType,
+            },
           },
-          onError: (error) => {
-            toast.error(`Upload failed: ${error.message}`);
-            setUploadProgress(0);
+          {
+            onSuccess: () => {
+              toast.success('Artwork updated successfully!');
+              setUploadProgress(0);
+              navigate('gallery');
+            },
+            onError: (error) => {
+              toast.error(`Update failed: ${error.message}`);
+              setUploadProgress(0);
+            },
+          }
+        );
+      } else {
+        // Create new artwork
+        const id = `artwork-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        
+        createArtwork(
+          {
+            id,
+            title: title.trim(),
+            description: description.trim(),
+            price: priceInPence,
+            image: imageBlob,
+            imageType: imageType,
           },
-        }
-      );
+          {
+            onSuccess: () => {
+              toast.success('Artwork uploaded successfully!');
+              // Reset form
+              setTitle('');
+              setDescription('');
+              setPriceGBP('');
+              setImageFile(null);
+              setImagePreview(null);
+              setUploadProgress(0);
+              
+              // Navigate to gallery to show the new artwork
+              navigate('gallery');
+            },
+            onError: (error) => {
+              toast.error(`Upload failed: ${error.message}`);
+              setUploadProgress(0);
+            },
+          }
+        );
+      }
     } catch (error: any) {
       setIsOptimizing(false);
       toast.error(`Image optimization failed: ${error.message}`);
     }
   };
 
+  const isPending = isCreating || isUpdating;
   const isSubmitting = isOptimizing || isPending;
 
   return (
     <Card className="border-2">
       <CardHeader>
-        <CardTitle className="text-2xl font-serif font-light">Upload Artwork</CardTitle>
-        <CardDescription>Share your art with the gallery</CardDescription>
+        <CardTitle className="text-2xl font-serif font-light">
+          {isEditMode ? 'Edit Artwork' : 'Upload Artwork'}
+        </CardTitle>
+        <CardDescription>
+          {isEditMode ? 'Update your artwork details' : 'Share your art with the gallery'}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -156,19 +243,27 @@ export default function AdminUploadForm() {
                       alt="Preview"
                       className="w-full h-full object-cover"
                     />
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => {
-                        setImageFile(null);
-                        setImagePreview(null);
-                      }}
-                      className="absolute top-2 right-2"
-                      disabled={isSubmitting}
-                    >
-                      Remove
-                    </Button>
+                    <div className="absolute top-2 right-2 flex gap-2">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={handleRemoveImage}
+                        disabled={isSubmitting}
+                      >
+                        <X className="h-4 w-4 mr-1" />
+                        Remove
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => document.getElementById('image')?.click()}
+                        disabled={isSubmitting}
+                      >
+                        Replace
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <label
@@ -208,28 +303,39 @@ export default function AdminUploadForm() {
             </div>
           )}
 
-          <Button
-            type="submit"
-            className="w-full gap-2"
-            disabled={isSubmitting}
-          >
-            {isOptimizing ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Optimizing image...
-              </>
-            ) : isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Uploading...
-              </>
-            ) : (
-              <>
-                <Upload className="h-4 w-4" />
-                Upload Artwork
-              </>
-            )}
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={() => navigate('gallery')}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="flex-1 gap-2"
+              disabled={isSubmitting}
+            >
+              {isOptimizing ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Optimizing image...
+                </>
+              ) : isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {isEditMode ? 'Updating...' : 'Uploading...'}
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4" />
+                  {isEditMode ? 'Update Artwork' : 'Upload Artwork'}
+                </>
+              )}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>

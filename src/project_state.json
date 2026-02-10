@@ -1,183 +1,32 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 25,
-  "summary": "Artwork gallery app \"Z'art\" where any user can upload artworks with title/description/GBP price, view them in a gallery, tap to view full display, and automatically resize oversized images on upload. Upload page remains accessible to all authenticated users; remove the Gallery homescreen upload shortcut.",
-  "architectural_notes": [
-    "Store artwork metadata: title, description, price (GBP) alongside image asset.",
-    "Implement automatic image resizing/compression during upload to handle oversized images.",
-    "Remove admin-only gating for upload UI and backend create endpoints; upload route/shortcut should be visible and accessible to all authenticated users.",
-    "Remove the Gallery homescreen Upload shortcut card/navigation shortcut; rely on Upload page access via route/header navigation (authenticated users only)."
-  ],
-  "known_issues": [
-    "Deployment/build process encountered an error; user requested a retry."
-  ],
-  "isFixRequest": true,
+  "projectStateVersion": 3,
+  "summary": "Draft app that supports uploads with editable upload fields and configurable watermark options.",
+  "architectural_notes": [],
+  "known_issues": [],
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-set-the-application-name-to-z-art-and-reflect-it-consistently-in-the-ui-header-title-and-any-app-metadata-used-by-the-frontend",
-      "title": "Set the application name to \"Z'art\" and reflect it consistently in the UI (header/title) and any app metadata used by the frontend.",
+      "id": "feature-add-an-artwork-editing-flow-that-allows-a-signed-in-user-to-edit-all-fields-that-are-available-on-upload-title-description-price-and-image-reusing-the-existing-upload-page-ui",
+      "title": "Add an artwork editing flow that allows a signed-in user to edit all fields that are available on upload (title, description, price, and image), reusing the existing Upload page UI.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-frontend-gallery-browsing-display-artworks-in-a-responsive-grid-with-thumbnail-preview-title-and-gbp-price-when-a-user-taps-clicks-an-artwork-card-open-a-full-artwork-view-that-shows-the-image-fully-along-with-title-description-and-formatted-gbp-price",
-      "title": "Implement frontend gallery browsing: display artworks in a responsive grid with thumbnail/preview, title, and GBP price. When a user taps/clicks an artwork card, open a full artwork view that shows the image fully along with title, description, and formatted GBP price.",
+      "id": "feature-extend-react-query-hooks-to-support-updating-an-existing-artwork-and-wire-the-upload-edit-form-submission-to-call-the-correct-mutation-create-vs-update-with-proper-cache-invalidation",
+      "title": "Extend React Query hooks to support updating an existing artwork, and wire the Upload/Edit form submission to call the correct mutation (create vs update) with proper cache invalidation.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-sold-watermark-display-option-in-the-ui-so-that-sold-artworks-can-optionally-render-a-watermark-overlay-on-the-image-instead-of-only-the-small-sold-badge",
+      "title": "Add a “SOLD” watermark display option in the UI so that sold artworks can optionally render a watermark overlay on the image (instead of only the small SOLD badge).",
       "reqIds": [
         "REQ-4"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-an-admin-only-upload-workflow-in-the-frontend-an-upload-form-for-title-description-gbp-price-input-and-image-file-selection-show-this-ui-only-when-the-authenticated-user-is-the-admin-as-determined-by-the-backend",
-      "title": "Implement an admin-only upload workflow in the frontend: an upload form for title, description, GBP price input, and image file selection; show this UI only when the authenticated user is the admin (as determined by the backend).",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-automatically-resize-oversized-images-on-the-client-before-upload-when-an-admin-selects-an-image-larger-than-a-defined-maximum-dimension-and-or-file-size-resize-it-preserving-aspect-ratio-and-compress-it-to-a-reasonable-jpeg-webp-quality-before-sending-to-the-backend",
-      "title": "Automatically resize oversized images on the client before upload: when an admin selects an image larger than a defined maximum dimension and/or file size, resize it (preserving aspect ratio) and compress it to a reasonable JPEG/WEBP quality before sending to the backend.",
-      "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-apply-a-cohesive-visual-theme-suitable-for-an-artwork-gallery-non-blue-non-purple-primary-palette-including-typography-spacing-and-card-detail-view-styling-and-use-it-consistently-across-gallery-detail-view-and-admin-upload-ui",
-      "title": "Apply a cohesive visual theme suitable for an artwork gallery (non-blue/non-purple primary palette), including typography, spacing, and card/detail view styling, and use it consistently across gallery, detail view, and admin upload UI.",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-generate-required-static-brand-images-and-render-them-in-the-ui-from-frontend-static-assets-do-not-serve-generated-images-through-the-backend",
-      "title": "Generate required static brand images and render them in the UI from frontend static assets (do not serve generated images through the backend).",
-      "reqIds": [
-        "REQ-8"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-split-the-admin-artwork-upload-ui-into-a-dedicated-upload-page-view-so-the-gallery-view-no-longer-contains-the-upload-form",
-      "title": "Split the admin artwork upload UI into a dedicated upload page/view, so the gallery view no longer contains the upload form.",
-      "reqIds": [
-        "REQ-9"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-in-app-navigation-to-access-the-separate-upload-page-and-back-to-gallery-showing-the-upload-navigation-entry-only-to-authenticated-admins-prevent-non-admin-users-from-accessing-the-upload-page",
-      "title": "Add in-app navigation to access the separate Upload page and back to Gallery, showing the Upload navigation entry only to authenticated admins; prevent non-admin users from accessing the Upload page.",
-      "reqIds": [
-        "REQ-10"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-an-admin-only-shortcut-on-the-homescreen-gallery-view-that-navigates-directly-to-the-upload-page",
-      "title": "Add an admin-only shortcut on the homescreen (Gallery view) that navigates directly to the Upload page.",
-      "reqIds": [
-        "REQ-11"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-clear-visual-cue-to-the-admin-only-upload-shortcut-card-on-the-gallery-view-so-the-shortcut-is-visually-highlighted-compared-to-surrounding-content",
-      "title": "Add a clear visual cue to the admin-only Upload shortcut card on the Gallery view so the shortcut is visually highlighted compared to surrounding content.",
-      "reqIds": [
-        "REQ-12"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-ensure-the-admin-only-upload-shortcut-card-is-visible-on-the-gallery-homescreen-view-whenever-the-authenticated-user-is-an-admin-and-make-the-ui-resilient-to-admin-status-loading-refresh-so-the-shortcut-reliably-appears-after-login",
-      "title": "Ensure the admin-only Upload shortcut card is visible on the Gallery (homescreen) view whenever the authenticated user is an admin, and make the UI resilient to admin-status loading/refresh so the shortcut reliably appears after login.",
-      "reqIds": [
-        "REQ-13"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-ensure-the-admin-only-upload-shortcut-card-on-the-gallery-view-renders-reliably-for-authenticated-admins-including-during-the-period-when-admin-status-is-still-being-determined-e-g-actor-identity-admin-query-not-yet-ready-so-the-shortcut-does-not-fail-to-appear-after-login-or-page-refresh",
-      "title": "Ensure the admin-only Upload shortcut card on the Gallery view renders reliably for authenticated admins, including during the period when admin status is still being determined (e.g., actor/identity/admin query not yet ready), so the shortcut does not fail to appear after login or page refresh.",
-      "reqIds": [
-        "REQ-14"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-increase-the-visual-prominence-of-the-admin-upload-shortcut-card-on-the-gallery-view-so-it-is-clearly-noticeable-compared-to-surrounding-content-stronger-contrast-clearer-call-to-action-and-improved-layout-for-small-screens-while-keeping-user-facing-copy-in-english",
-      "title": "Increase the visual prominence of the admin Upload shortcut card on the Gallery view so it is clearly noticeable compared to surrounding content (stronger contrast, clearer call-to-action, and improved layout for small screens), while keeping user-facing copy in English.",
-      "reqIds": [
-        "REQ-15"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-an-admin-only-artwork-uploading-section-directly-on-the-homescreen-gallery-view-that-lets-authenticated-admins-upload-a-new-artwork-without-navigating-to-the-separate-upload-page",
-      "title": "Add an admin-only artwork uploading section directly on the homescreen (Gallery view) that lets authenticated admins upload a new artwork without navigating to the separate Upload page.",
-      "reqIds": [
-        "REQ-16"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-keep-the-dedicated-upload-page-route-and-header-navigation-behavior-unchanged-and-ensure-the-new-homescreen-upload-section-does-not-break-or-replace-the-existing-admin-only-upload-shortcut-card-and-upload-page-access-controls",
-      "title": "Keep the dedicated Upload page route and header navigation behavior unchanged, and ensure the new homescreen upload section does not break or replace the existing admin-only Upload shortcut card and Upload page access controls.",
-      "reqIds": [
-        "REQ-17"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-frontend-route-guarding-for-the-upload-page-so-that-any-authenticated-user-can-access-the-upload-route-unauthenticated-users-attempting-to-access-the-upload-route-must-be-blocked-with-an-appropriate-message-and-a-navigation-option-back-to-the-gallery",
-      "title": "Update frontend route guarding for the Upload page so that any authenticated user can access the upload route; unauthenticated users attempting to access the upload route must be blocked with an appropriate message and a navigation option back to the Gallery.",
-      "reqIds": [
-        "REQ-19"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-header-navigation-so-the-upload-navigation-entry-is-visible-to-all-authenticated-users-not-admin-only",
-      "title": "Update header navigation so the Upload navigation entry is visible to all authenticated users (not admin-only).",
-      "reqIds": [
-        "REQ-20"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-gallery-homescreen-upload-shortcut-and-inline-upload-section-so-they-are-available-to-all-authenticated-users-not-admin-only-and-remove-adjust-any-user-facing-copy-that-claims-uploads-are-admin-only",
-      "title": "Update the Gallery homescreen upload shortcut and inline upload section so they are available to all authenticated users (not admin-only), and remove/adjust any user-facing copy that claims uploads are admin-only.",
-      "reqIds": [
-        "REQ-21"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-remove-the-galleryview-inline-upload-section-corresponding-to-xpath-html-1-body-1-div-1-div-1-main-1-section-1-div-2-div-1-the-div-classname-mb-12-wrapper-that-renders-adminuploadform-so-the-upload-form-no-longer-appears-on-the-gallery-page",
-      "title": "Remove the GalleryView inline upload section corresponding to XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[1]/div[2]/div[1] (the <div className=\"mb-12\"> wrapper that renders <AdminUploadForm />) so the upload form no longer appears on the Gallery page.",
-      "reqIds": [
-        "REQ-22"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-remove-the-header-navigation-shortcut-button-at-xpath-html-1-body-1-div-1-div-1-header-1-div-1-div-2-nav-1-button-2-the-authenticated-only-upload-button-so-it-no-longer-renders-in-the-app-header-navigation",
-      "title": "Remove the header navigation shortcut button at XPath /html[1]/body[1]/div[1]/div[1]/header[1]/div[1]/div[2]/nav[1]/button[2] (the authenticated-only \"Upload\" button) so it no longer renders in the app header navigation.",
-      "reqIds": [
-        "REQ-23"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-remove-the-header-navigation-button-at-xpath-html-1-body-1-div-1-div-1-header-1-div-1-div-2-nav-1-button-2-so-it-no-longer-renders-in-the-app-header-navigation-this-is-the-authenticated-only-upload-button-in-the-header-nav",
-      "title": "Remove the header navigation button at XPath /html[1]/body[1]/div[1]/div[1]/header[1]/div[1]/div[2]/nav[1]/button[2] so it no longer renders in the app header navigation (this is the authenticated-only \"Upload\" button in the header nav).",
-      "reqIds": [
-        "REQ-24"
       ],
       "version": 1
     }
@@ -185,65 +34,26 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Create app named \"Z'art\" (artwork gallery)",
+      "summary": "Enable editing of all upload fields.",
       "reqIds": [],
       "status": "pending"
     },
     {
-      "id": "AR-3",
-      "summary": "Artwork uploads include title, description, and price in GBP",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Gallery view: display uploaded artworks and open full display when tapped",
+      "id": "AR-2",
+      "summary": "Add a SOLD watermark option.",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-5",
-      "summary": "Automatically resize oversized images on upload",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-8",
-      "summary": "Create backend CRUD endpoints for artworks with the following fields: id, title, description, price in GBP (stored as integer minor units/pence), image content, image content type, created timestamp, and owner/uploader principal. Restrict creation (upload) to admin callers.",
+      "summary": "Update backend authorization so that editing an artwork is permitted for the artwork owner as well as admins, while preserving existing security checks for other operations.",
       "reqIds": [
         "REQ-3"
       ],
       "status": "pending"
-    },
-    {
-      "id": "AR-9",
-      "summary": "Separate the admin artwork uploading page from the public gallery view (dedicated upload route/page rather than combined UI)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-12",
-      "summary": "Add an artwork uploading section on the homescreen (Gallery view) for admins",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-13",
-      "summary": "Allow all authenticated users (not just admin) to upload new artworks (remove admin-only gating in frontend and backend).",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-15",
-      "summary": "Update backend authorization so that any authenticated user (permission #user) can create/upload new artworks, rather than restricting uploads to admins only.",
-      "reqIds": [
-        "REQ-18"
-      ],
-      "status": "pending"
     }
   ],
-  "gameProjectType": "none",
-  "projectName": "Z'art",
+  "projectName": "Enable editing of all artwork upload fields and add SOLD watermark display option",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

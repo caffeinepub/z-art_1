@@ -97,6 +97,7 @@ export interface Artwork {
     owner: Principal;
     createdAt: Time;
     description: string;
+    isSold: boolean;
     image: ExternalBlob;
     price: bigint;
 }
@@ -146,7 +147,8 @@ export interface backendInterface {
     isCallerAdmin(): Promise<boolean>;
     listArtworks(): Promise<Array<[string, Artwork]>>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    transferArtwork(_artworkId: string, _recipient: Principal): Promise<void>;
+    setArtworkSoldStatus(artworkId: string, isSold: boolean): Promise<void>;
+    transferArtwork(artworkId: string, recipient: Principal): Promise<void>;
     updateArtwork(id: string, updatedArtwork: {
         title: string;
         imageType: string;
@@ -431,6 +433,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async setArtworkSoldStatus(arg0: string, arg1: boolean): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.setArtworkSoldStatus(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.setArtworkSoldStatus(arg0, arg1);
+            return result;
+        }
+    }
     async transferArtwork(arg0: string, arg1: Principal): Promise<void> {
         if (this.processError) {
             try {
@@ -497,6 +513,7 @@ async function from_candid_record_n14(_uploadFile: (file: ExternalBlob) => Promi
     owner: Principal;
     createdAt: _Time;
     description: string;
+    isSold: boolean;
     image: _ExternalBlob;
     price: bigint;
 }): Promise<{
@@ -506,6 +523,7 @@ async function from_candid_record_n14(_uploadFile: (file: ExternalBlob) => Promi
     owner: Principal;
     createdAt: Time;
     description: string;
+    isSold: boolean;
     image: ExternalBlob;
     price: bigint;
 }> {
@@ -516,6 +534,7 @@ async function from_candid_record_n14(_uploadFile: (file: ExternalBlob) => Promi
         owner: value.owner,
         createdAt: value.createdAt,
         description: value.description,
+        isSold: value.isSold,
         image: await from_candid_ExternalBlob_n15(_uploadFile, _downloadFile, value.image),
         price: value.price
     };

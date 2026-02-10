@@ -33,6 +33,7 @@ export const Artwork = IDL.Record({
   'owner' : IDL.Principal,
   'createdAt' : Time,
   'description' : IDL.Text,
+  'isSold' : IDL.Bool,
   'image' : ExternalBlob,
   'price' : IDL.Nat,
 });
@@ -103,6 +104,7 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'setArtworkSoldStatus' : IDL.Func([IDL.Text, IDL.Bool], [], []),
   'transferArtwork' : IDL.Func([IDL.Text, IDL.Principal], [], []),
   'updateArtwork' : IDL.Func(
       [
@@ -148,6 +150,7 @@ export const idlFactory = ({ IDL }) => {
     'owner' : IDL.Principal,
     'createdAt' : Time,
     'description' : IDL.Text,
+    'isSold' : IDL.Bool,
     'image' : ExternalBlob,
     'price' : IDL.Nat,
   });
@@ -218,6 +221,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'setArtworkSoldStatus' : IDL.Func([IDL.Text, IDL.Bool], [], []),
     'transferArtwork' : IDL.Func([IDL.Text, IDL.Principal], [], []),
     'updateArtwork' : IDL.Func(
         [

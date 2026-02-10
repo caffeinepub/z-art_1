@@ -1,4 +1,5 @@
 import type { Artwork } from '../backend';
+import type { SoldDisplayMode } from '../hooks/useSoldDisplayPreference';
 import { formatGBP } from '../utils/formatGBP';
 import {
   Dialog,
@@ -8,16 +9,25 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { X } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { X, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ArtworkDetailDialogProps {
   artwork: Artwork;
   open: boolean;
   onClose: () => void;
+  onEdit?: (artwork: Artwork) => void;
+  soldDisplayMode: SoldDisplayMode;
 }
 
-export default function ArtworkDetailDialog({ artwork, open, onClose }: ArtworkDetailDialogProps) {
+export default function ArtworkDetailDialog({ 
+  artwork, 
+  open, 
+  onClose, 
+  onEdit,
+  soldDisplayMode 
+}: ArtworkDetailDialogProps) {
   const imageUrl = artwork.image.getDirectURL();
 
   return (
@@ -32,14 +42,46 @@ export default function ArtworkDetailDialog({ artwork, open, onClose }: ArtworkD
           <X className="h-4 w-4" />
         </Button>
         
+        {onEdit && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-16 top-4 z-10 rounded-full bg-background/80 backdrop-blur-sm"
+            onClick={() => onEdit(artwork)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+        )}
+        
         <ScrollArea className="max-h-[90vh]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-            <div className="bg-muted flex items-center justify-center p-8">
+            <div className="bg-muted flex items-center justify-center p-8 relative">
               <img
                 src={imageUrl}
                 alt={artwork.title}
                 className="w-full h-auto max-h-[70vh] object-contain"
               />
+              {artwork.isSold && soldDisplayMode === 'badge' && (
+                <Badge 
+                  variant="secondary" 
+                  className="absolute top-6 right-6 bg-background/90 backdrop-blur-sm text-foreground font-semibold shadow-lg border border-border text-base px-4 py-2"
+                >
+                  SOLD
+                </Badge>
+              )}
+              {artwork.isSold && soldDisplayMode === 'watermark' && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div 
+                    className="text-7xl sm:text-8xl md:text-9xl font-bold text-background/70 transform rotate-[-30deg] select-none"
+                    style={{
+                      textShadow: '0 0 30px rgba(0,0,0,0.4), 0 0 60px rgba(0,0,0,0.3)',
+                      letterSpacing: '0.15em'
+                    }}
+                  >
+                    SOLD
+                  </div>
+                </div>
+              )}
             </div>
             
             <div className="p-8 space-y-6">

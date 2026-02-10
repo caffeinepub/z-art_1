@@ -11,7 +11,17 @@ export function useGetAllArtworks() {
     queryFn: async () => {
       if (!actor) return [];
       const artworksArray = await actor.listArtworks();
-      return artworksArray.map(([_, artwork]) => artwork);
+      const artworks = artworksArray.map(([_, artwork]) => artwork);
+      
+      // Sort deterministically: newest first (createdAt descending), with id as tie-breaker
+      return artworks.sort((a, b) => {
+        // Primary sort: createdAt descending (newest first)
+        if (a.createdAt > b.createdAt) return -1;
+        if (a.createdAt < b.createdAt) return 1;
+        
+        // Secondary sort: id ascending for stable ordering when timestamps match
+        return a.id.localeCompare(b.id);
+      });
     },
     enabled: !!actor && !isFetching,
   });
@@ -45,6 +55,50 @@ export function useCreateArtwork() {
     }) => {
       if (!actor) throw new Error('Actor not available');
       await actor.createArtwork(artwork);
+    },
+    onSuccess: async () => {
+      // Invalidate and refetch the artworks list to show the new upload immediately
+      await queryClient.invalidateQueries({ queryKey: ['artworks'] });
+      await queryClient.refetchQueries({ queryKey: ['artworks'] });
+    },
+  });
+}
+
+export function useUpdateArtwork() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, artwork }: {
+      id: string;
+      artwork: {
+        title: string;
+        description: string;
+        price: bigint;
+        image: ExternalBlob;
+        imageType: string;
+      };
+    }) => {
+      if (!actor) throw new Error('Actor not available');
+      await actor.updateArtwork(id, artwork);
+    },
+    onSuccess: async (_, variables) => {
+      // Invalidate both the artworks list and the specific artwork
+      await queryClient.invalidateQueries({ queryKey: ['artworks'] });
+      await queryClient.invalidateQueries({ queryKey: ['artwork', variables.id] });
+      await queryClient.refetchQueries({ queryKey: ['artworks'] });
+    },
+  });
+}
+
+export function useSetArtworkSoldStatus() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ artworkId, isSold }: { artworkId: string; isSold: boolean }) => {
+      if (!actor) throw new Error('Actor not available');
+      await actor.setArtworkSoldStatus(artworkId, isSold);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['artworks'] });

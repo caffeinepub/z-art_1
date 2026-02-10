@@ -2,10 +2,14 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-remove-the-header-navigation-button-at-xpath-html-1-body-1-div-1-div-1-header-1-div-1-div-2-nav-1-button-2-so-it-no-longer-renders-in-the-app-header-navigation-this-is-the-authenticated-only-upload-button-in-the-header-nav",
-      "featureTitle": "Remove the header navigation button at XPath /html[1]/body[1]/div[1]/div[1]/header[1]/div[1]/div[2]/nav[1]/button[2] so it no longer renders in the app header navigation (this is the authenticated-only \"Upload\" button in the header nav).",
+      "featureId": "feature-add-an-artwork-editing-flow-that-allows-a-signed-in-user-to-edit-all-fields-that-are-available-on-upload-title-description-price-and-image-reusing-the-existing-upload-page-ui",
+      "featureTitle": "Add an artwork editing flow that allows a signed-in user to edit all fields that are available on upload (title, description, price, and image), reusing the existing Upload page UI.",
       "files": [
-        "frontend/src/components/AppHeaderNav.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/AdminUploadForm.tsx",
+        "frontend/src/components/ArtworkDetailDialog.tsx",
+        "frontend/src/hooks/useRoute.ts",
+        "frontend/src/views/UploadView.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,7 +21,52 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-24"
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-extend-react-query-hooks-to-support-updating-an-existing-artwork-and-wire-the-upload-edit-form-submission-to-call-the-correct-mutation-create-vs-update-with-proper-cache-invalidation",
+      "featureTitle": "Extend React Query hooks to support updating an existing artwork, and wire the Upload/Edit form submission to call the correct mutation (create vs update) with proper cache invalidation.",
+      "files": [
+        "frontend/src/components/AdminUploadForm.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-sold-watermark-display-option-in-the-ui-so-that-sold-artworks-can-optionally-render-a-watermark-overlay-on-the-image-instead-of-only-the-small-sold-badge",
+      "featureTitle": "Add a “SOLD” watermark display option in the UI so that sold artworks can optionally render a watermark overlay on the image (instead of only the small SOLD badge).",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/ArtworkCard.tsx",
+        "frontend/src/components/ArtworkDetailDialog.tsx",
+        "frontend/src/hooks/useSoldDisplayPreference.ts",
+        "frontend/src/views/GalleryView.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
       ],
       "confidence": "high"
     }

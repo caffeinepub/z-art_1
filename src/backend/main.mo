@@ -18,20 +18,21 @@ actor {
     imageType : Text;
     createdAt : Time.Time;
     owner : Principal;
+    isSold : Bool;
   };
 
-  public type UserProfile = {
+  type UserProfile = {
     name : Text;
   };
 
-  public type Purchase = {
+  type Purchase = {
     artworkId : Text;
     buyer : Principal;
     price : Nat;
     timestamp : Time.Time;
   };
 
-  public type Wallet = {
+  type Wallet = {
     owner : Principal;
     balance : Nat;
   };
@@ -95,6 +96,7 @@ actor {
       imageType = artwork.imageType;
       createdAt = Time.now();
       owner = caller;
+      isSold = false;
     };
 
     artworks.add(artwork.id, newArtwork);
@@ -115,10 +117,22 @@ actor {
     artworks.toArray().filter(func((_, a)) { a.owner == user }).map(func((_, a)) { a.id });
   };
 
-  public shared ({ caller }) func transferArtwork(_artworkId : Text, _recipient : Principal) : async () {
+  public shared ({ caller }) func transferArtwork(artworkId : Text, recipient : Principal) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can transfer artworks");
     };
+
+    let artwork = switch (artworks.get(artworkId)) {
+      case (null) { Runtime.trap("Artwork not found") };
+      case (?artwork) { artwork };
+    };
+
+    if (caller != artwork.owner and not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only artwork owner or admin can transfer artworks");
+    };
+
+    let updatedArtwork = { artwork with owner = recipient };
+    artworks.add(artworkId, updatedArtwork);
   };
 
   public shared ({ caller }) func updateArtwork(id : Text, updatedArtwork : {
@@ -128,13 +142,13 @@ actor {
     image : Storage.ExternalBlob;
     imageType : Text;
   }) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admin can update artworks");
-    };
-
     let existingArtwork = switch (artworks.get(id)) {
       case (null) { Runtime.trap("Artwork not found") };
       case (?artwork) { artwork };
+    };
+
+    if (caller != existingArtwork.owner and not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only artwork owner or admin can update artworks");
     };
 
     let newArtwork : Artwork = {
@@ -146,6 +160,7 @@ actor {
       imageType = updatedArtwork.imageType;
       createdAt = existingArtwork.createdAt;
       owner = existingArtwork.owner;
+      isSold = existingArtwork.isSold;
     };
 
     artworks.add(id, newArtwork);
@@ -162,5 +177,23 @@ actor {
         artworks.remove(id);
       };
     };
+  };
+
+  public shared ({ caller }) func setArtworkSoldStatus(artworkId : Text, isSold : Bool) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can modify sold status");
+    };
+
+    let artwork = switch (artworks.get(artworkId)) {
+      case (null) { Runtime.trap("Artwork not found") };
+      case (?artwork) { artwork };
+    };
+
+    if (caller != artwork.owner and not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only artwork owner or admin can change sold status");
+    };
+
+    let updatedArtwork = { artwork with isSold };
+    artworks.add(artworkId, updatedArtwork);
   };
 };
