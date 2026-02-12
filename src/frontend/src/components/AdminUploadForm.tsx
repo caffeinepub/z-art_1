@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useCreateArtwork, useUpdateArtwork } from '../hooks/useQueries';
+import { useCreateArtwork, useUpdateArtwork, useDeleteArtwork } from '../hooks/useQueries';
 import { useRoute } from '../hooks/useRoute';
 import { ExternalBlob } from '../backend';
 import type { Artwork } from '../backend';
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, Loader2, ImageIcon, X } from 'lucide-react';
+import { Upload, Loader2, ImageIcon, X, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AdminUploadFormProps {
@@ -30,6 +30,7 @@ export default function AdminUploadForm({ artwork }: AdminUploadFormProps) {
 
   const { mutate: createArtwork, isPending: isCreating } = useCreateArtwork();
   const { mutate: updateArtwork, isPending: isUpdating } = useUpdateArtwork();
+  const { mutate: deleteArtwork, isPending: isDeleting } = useDeleteArtwork();
   const { navigate } = useRoute();
 
   // Prefill form when in edit mode
@@ -60,6 +61,22 @@ export default function AdminUploadForm({ artwork }: AdminUploadFormProps) {
     setImageFile(null);
     setImagePreview(null);
     setImageReplaced(false);
+  };
+
+  // Delete handler - intentionally immediate with no confirmation
+  // This is the only place in the UI where deletion is available (edit page only)
+  const handleDelete = () => {
+    if (!artwork) return;
+    
+    deleteArtwork(artwork.id, {
+      onSuccess: () => {
+        toast.success('Artwork deleted successfully');
+        navigate('gallery');
+      },
+      onError: (error) => {
+        toast.error(`Failed to delete artwork: ${error.message}`);
+      }
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -202,7 +219,7 @@ export default function AdminUploadForm({ artwork }: AdminUploadFormProps) {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Enter artwork title"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isDeleting}
                 />
               </div>
 
@@ -212,9 +229,9 @@ export default function AdminUploadForm({ artwork }: AdminUploadFormProps) {
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe the artwork"
-                  rows={4}
-                  disabled={isSubmitting}
+                  placeholder="Describe your artwork"
+                  rows={5}
+                  disabled={isSubmitting || isDeleting}
                 />
               </div>
 
@@ -228,114 +245,120 @@ export default function AdminUploadForm({ artwork }: AdminUploadFormProps) {
                   value={priceGBP}
                   onChange={(e) => setPriceGBP(e.target.value)}
                   placeholder="0.00"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isDeleting}
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="image">Image *</Label>
-              <div className="border-2 border-dashed border-border rounded-lg p-4 hover:border-primary/50 transition-colors">
-                {imagePreview ? (
-                  <div className="relative aspect-square w-full overflow-hidden rounded-md">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-2 right-2 flex gap-2">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        size="sm"
-                        onClick={handleRemoveImage}
-                        disabled={isSubmitting}
-                      >
-                        <X className="h-4 w-4 mr-1" />
-                        Remove
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => document.getElementById('image')?.click()}
-                        disabled={isSubmitting}
-                      >
-                        Replace
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <label
-                    htmlFor="image"
-                    className="flex flex-col items-center justify-center aspect-square cursor-pointer"
+            <div className="space-y-4">
+              <Label>Artwork Image *</Label>
+              
+              {imagePreview ? (
+                <div className="relative border-2 border-dashed border-border rounded-lg overflow-hidden bg-muted">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-64 object-contain"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2"
+                    onClick={handleRemoveImage}
+                    disabled={isSubmitting || isDeleting}
                   >
-                    <ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
-                    <span className="text-sm text-muted-foreground text-center">
-                      Click to select an image
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors">
+                  <input
+                    type="file"
+                    id="image-upload"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    disabled={isSubmitting || isDeleting}
+                  />
+                  <label
+                    htmlFor="image-upload"
+                    className="cursor-pointer flex flex-col items-center gap-2"
+                  >
+                    <ImageIcon className="h-12 w-12 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
+                      Click to upload image
                     </span>
                   </label>
-                )}
-                <input
-                  id="image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                  disabled={isSubmitting}
-                />
-              </div>
+                </div>
+              )}
+
+              {uploadProgress > 0 && uploadProgress < 100 && (
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Uploading...</span>
+                    <span>{uploadProgress}%</span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div
+                      className="bg-primary h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {uploadProgress > 0 && uploadProgress < 100 && (
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Uploading...</span>
-                <span>{uploadProgress}%</span>
-              </div>
-              <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-                <div
-                  className="bg-primary h-full transition-all duration-300"
-                  style={{ width: `${uploadProgress}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="flex gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={() => navigate('gallery')}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
+          <div className="flex gap-4 pt-4">
             <Button
               type="submit"
-              className="flex-1 gap-2"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isDeleting}
+              className="flex-1"
             >
               {isOptimizing ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Optimizing image...
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Optimizing...
                 </>
               ) : isPending ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   {isEditMode ? 'Updating...' : 'Uploading...'}
                 </>
               ) : (
                 <>
-                  <Upload className="h-4 w-4" />
+                  <Upload className="mr-2 h-4 w-4" />
                   {isEditMode ? 'Update Artwork' : 'Upload Artwork'}
                 </>
               )}
             </Button>
           </div>
+
+          {/* Delete button - only available on edit page, intentionally no confirmation */}
+          {isEditMode && (
+            <div className="pt-4 border-t border-border">
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={isDeleting || isSubmitting}
+                className="w-full"
+              >
+                {isDeleting ? (
+                  <>
+                    <Trash2 className="mr-2 h-4 w-4 animate-pulse" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Artwork
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </form>
       </CardContent>
     </Card>

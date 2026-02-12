@@ -1,94 +1,55 @@
 {
   "kind": "build_request",
-  "title": "Enable editing of all artwork upload fields and add SOLD watermark display option",
+  "title": "Remove duplicate Delete action from Artwork gallery list; keep delete only on edit page",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add an artwork editing flow that allows a signed-in user to edit all fields that are available on upload (title, description, price, and image), reusing the existing Upload page UI.",
+      "text": "Remove the Delete artwork action(s) from the Artwork gallery/list view so that no deletion control is rendered or usable from the Gallery (artwork cards/grid) UI.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-1",
+          "msg-2"
         ],
         "quotes": [
-          "Enable editing of all upload fields"
+          "Remove the duplicated delete option in the list view and just have it on the edit page",
+          "The Artwork list"
         ]
       },
       "acceptanceCriteria": [
-        "From the Gallery, a user can start editing an existing artwork and is taken to the Upload page in an explicit “Edit” mode.",
-        "In Edit mode, the form is pre-filled with the existing artwork title, description, and price.",
-        "In Edit mode, the user can optionally replace the image (including preview, remove/replace behaviors, and client-side optimization).",
-        "Submitting in Edit mode updates the existing artwork and returns the user to the Gallery with the updated values visible without a hard refresh.",
-        "Submitting in Create mode continues to create a new artwork as it does today."
+        "In the GalleryView artwork grid, there is no Delete button/link/menu item for any artwork card.",
+        "GalleryView and any components it renders for list items (e.g., ArtworkCard) do not import or call the delete mutation hook (useDeleteArtwork) or otherwise trigger deletion.",
+        "Manual check: from the gallery route, a user cannot delete an artwork using any visible UI control."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Extend React Query hooks to support updating an existing artwork, and wire the Upload/Edit form submission to call the correct mutation (create vs update) with proper cache invalidation.",
+      "text": "Ensure the only UI entry point for deleting an artwork is the edit page (UploadView in edit mode) via the existing AdminUploadForm destructive Delete Artwork button; do not add alternate delete controls in the Artwork detail dialog or gallery UI.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "Enable editing of all upload fields"
+          "Remove the duplicated delete option in the list view and just have it on the edit page"
         ]
       },
       "acceptanceCriteria": [
-        "A new update mutation exists alongside the existing create mutation in the query layer.",
-        "After a successful update, the artworks list query is invalidated/refetched so edited cards reflect new data.",
-        "Error states during update show an English error toast message and do not clear the form unintentionally."
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Update backend authorization so that editing an artwork is permitted for the artwork owner as well as admins, while preserving existing security checks for other operations.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "Enable editing of all upload fields"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Calling updateArtwork succeeds when the caller is the owner of the artwork.",
-        "Calling updateArtwork succeeds when the caller is an admin.",
-        "Calling updateArtwork traps with an authorization error when the caller is neither the owner nor an admin.",
-        "The update preserves immutable fields (id, createdAt, owner) and preserves existing isSold status."
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Add a “SOLD” watermark display option in the UI so that sold artworks can optionally render a watermark overlay on the image (instead of only the small SOLD badge).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "add a SOLD watermark option"
-        ]
-      },
-      "acceptanceCriteria": [
-        "The Gallery view provides a clearly labeled control to choose how sold status is displayed (at minimum: Badge vs Watermark).",
-        "When Watermark is selected and an artwork isSold=true, the artwork image shows a large, semi-transparent, diagonal “SOLD” watermark overlay.",
-        "When Badge is selected and an artwork isSold=true, the existing small “SOLD” badge behavior remains.",
-        "The chosen option applies consistently to both the artwork card grid and the artwork detail dialog during the session (and should persist across reloads via local storage or an equivalent frontend-only persistence)."
+        "In edit mode (UploadView with an editArtworkId), AdminUploadForm continues to show exactly one Delete Artwork button and it deletes immediately with no confirmation, then navigates back to the gallery.",
+        "In create mode (UploadView without an editArtworkId), no delete button is shown.",
+        "ArtworkDetailDialog does not render any delete control."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor in backend/main.mo; only add migration.mo changes if state shape must change (not expected for this request).",
-    "Do not edit files under frontend/src/components/ui or any path listed in frontend.immutablePaths.",
-    "Use English for all user-facing text."
+    "Do not edit any files under frontend/src/components/ui or any frontend immutablePaths defined by the system context.",
+    "Do not change backend deletion behavior or permissions; this change is UI/UX and wiring only."
   ],
   "nonGoals": [
-    "Adding third-party authentication providers (only Internet Identity is supported).",
-    "Implementing image processing/watermarking on the backend (the watermark option is a display overlay in the UI).",
-    "Adding external databases or services."
+    "Adding a delete confirmation dialog or changing the immediate-delete behavior on the edit page.",
+    "Adding role-based variations of delete UI beyond the existing edit-page behavior.",
+    "Changing sold-status functionality."
   ],
   "imageRequirements": {
     "required": [],

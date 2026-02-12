@@ -46,7 +46,7 @@ export interface backendInterface {
     }): Promise<void>;
     deleteArtwork(id: string): Promise<void>;
     getArtwork(id: string): Promise<Artwork | null>;
-    getArtworksByUser(user: Principal): Promise<Array<string>>;
+    getArtworksByUser(user: Principal): Promise<Array<[string, Artwork]>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;

@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import type { Artwork } from '../backend';
 import type { SoldDisplayMode } from '../hooks/useSoldDisplayPreference';
 import { formatGBP } from '../utils/formatGBP';
+import { useSetArtworkSoldStatus } from '../hooks/useQueries';
 import {
   Dialog,
   DialogContent,
@@ -10,6 +12,8 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { X, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -18,6 +22,7 @@ interface ArtworkDetailDialogProps {
   open: boolean;
   onClose: () => void;
   onEdit?: (artwork: Artwork) => void;
+  canToggleSold?: boolean;
   soldDisplayMode: SoldDisplayMode;
 }
 
@@ -26,9 +31,43 @@ export default function ArtworkDetailDialog({
   open, 
   onClose, 
   onEdit,
+  canToggleSold = false,
   soldDisplayMode 
 }: ArtworkDetailDialogProps) {
   const imageUrl = artwork.image.getDirectURL();
+  const { mutate: setSoldStatus, isPending: isSoldPending } = useSetArtworkSoldStatus();
+  
+  // Local state for optimistic UI updates
+  const [optimisticSoldStatus, setOptimisticSoldStatus] = useState<boolean | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Use optimistic state if available, otherwise use actual artwork status
+  const displayedSoldStatus = optimisticSoldStatus !== null ? optimisticSoldStatus : artwork.isSold;
+
+  const handleSoldToggle = (checked: boolean) => {
+    // Clear any previous errors
+    setError(null);
+    
+    // Optimistically update the UI
+    setOptimisticSoldStatus(checked);
+    
+    // Call the backend
+    setSoldStatus(
+      { artworkId: artwork.id, isSold: checked },
+      {
+        onSuccess: () => {
+          // Clear optimistic state on success (real data will come from query invalidation)
+          setOptimisticSoldStatus(null);
+        },
+        onError: (err) => {
+          // Revert optimistic update on error
+          setOptimisticSoldStatus(null);
+          setError('Failed to update sold status. Please try again.');
+          console.error('Error updating sold status:', err);
+        }
+      }
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -61,7 +100,7 @@ export default function ArtworkDetailDialog({
                 alt={artwork.title}
                 className="w-full h-auto max-h-[70vh] object-contain"
               />
-              {artwork.isSold && soldDisplayMode === 'badge' && (
+              {displayedSoldStatus && soldDisplayMode === 'badge' && (
                 <Badge 
                   variant="secondary" 
                   className="absolute top-6 right-6 bg-background/90 backdrop-blur-sm text-foreground font-semibold shadow-lg border border-border text-base px-4 py-2"
@@ -69,7 +108,7 @@ export default function ArtworkDetailDialog({
                   SOLD
                 </Badge>
               )}
-              {artwork.isSold && soldDisplayMode === 'watermark' && (
+              {displayedSoldStatus && soldDisplayMode === 'watermark' && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <div 
                     className="text-7xl sm:text-8xl md:text-9xl font-bold text-background/70 transform rotate-[-30deg] select-none"
@@ -96,6 +135,25 @@ export default function ArtworkDetailDialog({
                 <div className="space-y-2">
                   <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Description</h4>
                   <p className="text-foreground leading-relaxed whitespace-pre-wrap">{artwork.description}</p>
+                </div>
+              )}
+
+              {canToggleSold && (
+                <div className="pt-4 border-t border-border space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="sold-toggle" className="text-sm font-medium cursor-pointer">
+                      Mark as Sold
+                    </Label>
+                    <Switch
+                      id="sold-toggle"
+                      checked={displayedSoldStatus}
+                      onCheckedChange={handleSoldToggle}
+                      disabled={isSoldPending}
+                    />
+                  </div>
+                  {error && (
+                    <p className="text-xs text-destructive">{error}</p>
+                  )}
                 </div>
               )}
 

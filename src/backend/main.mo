@@ -25,26 +25,11 @@ actor {
     name : Text;
   };
 
-  type Purchase = {
-    artworkId : Text;
-    buyer : Principal;
-    price : Nat;
-    timestamp : Time.Time;
-  };
-
-  type Wallet = {
-    owner : Principal;
-    balance : Nat;
-  };
-
   let artworks = Map.empty<Text, Artwork>();
   let userProfiles = Map.empty<Principal, UserProfile>();
-  var purchases = Map.empty<Text, Purchase>();
-  let wallets = Map.empty<Principal, Wallet>();
 
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
-
   include MixinStorage();
 
   public query ({ caller }) func isAdmin() : async Bool {
@@ -110,11 +95,11 @@ actor {
     artworks.toArray();
   };
 
-  public query ({ caller }) func getArtworksByUser(user : Principal) : async [Text] {
+  public query ({ caller }) func getArtworksByUser(user : Principal) : async [(Text, Artwork)] {
     if (caller != user and not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admin or owner can access this");
     };
-    artworks.toArray().filter(func((_, a)) { a.owner == user }).map(func((_, a)) { a.id });
+    artworks.toArray().filter(func((_, a)) { a.owner == user });
   };
 
   public shared ({ caller }) func transferArtwork(artworkId : Text, recipient : Principal) : async () {
@@ -167,16 +152,20 @@ actor {
   };
 
   public shared ({ caller }) func deleteArtwork(id : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admin can delete artworks");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can delete artworks");
     };
 
-    switch (artworks.get(id)) {
+    let artwork = switch (artworks.get(id)) {
       case (null) { Runtime.trap("Artwork not found") };
-      case (?_) {
-        artworks.remove(id);
-      };
+      case (?artwork) { artwork };
     };
+
+    if (caller != artwork.owner and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Only artwork owner or admin can delete artworks");
+    };
+
+    artworks.remove(id);
   };
 
   public shared ({ caller }) func setArtworkSoldStatus(artworkId : Text, isSold : Bool) : async () {

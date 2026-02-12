@@ -71,7 +71,7 @@ export interface _SERVICE {
   >,
   'deleteArtwork' : ActorMethod<[string], undefined>,
   'getArtwork' : ActorMethod<[string], [] | [Artwork]>,
-  'getArtworksByUser' : ActorMethod<[Principal], Array<string>>,
+  'getArtworksByUser' : ActorMethod<[Principal], Array<[string, Artwork]>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,

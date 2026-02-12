@@ -1,59 +1,36 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Draft app that supports uploads with editable upload fields and configurable watermark options.",
+  "summary": "Artwork management app: delete action should exist only on the Artwork edit page (removed entirely from Artwork list view).",
   "architectural_notes": [],
   "known_issues": [],
-  "isFixRequest": false,
-  "existing_features": [
-    {
-      "id": "feature-add-an-artwork-editing-flow-that-allows-a-signed-in-user-to-edit-all-fields-that-are-available-on-upload-title-description-price-and-image-reusing-the-existing-upload-page-ui",
-      "title": "Add an artwork editing flow that allows a signed-in user to edit all fields that are available on upload (title, description, price, and image), reusing the existing Upload page UI.",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-extend-react-query-hooks-to-support-updating-an-existing-artwork-and-wire-the-upload-edit-form-submission-to-call-the-correct-mutation-create-vs-update-with-proper-cache-invalidation",
-      "title": "Extend React Query hooks to support updating an existing artwork, and wire the Upload/Edit form submission to call the correct mutation (create vs update) with proper cache invalidation.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-sold-watermark-display-option-in-the-ui-so-that-sold-artworks-can-optionally-render-a-watermark-overlay-on-the-image-instead-of-only-the-small-sold-badge",
-      "title": "Add a “SOLD” watermark display option in the UI so that sold artworks can optionally render a watermark overlay on the image (instead of only the small SOLD badge).",
-      "reqIds": [
-        "REQ-4"
-      ],
-      "version": 1
-    }
-  ],
+  "isFixRequest": true,
+  "existing_features": [],
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Enable editing of all upload fields.",
+      "summary": "Remove delete option from Artwork list view entirely; keep delete only on Artwork edit page (also remove any duplicated delete actions in list view).",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Add a SOLD watermark option.",
-      "reqIds": [],
+      "summary": "Remove the Delete artwork action(s) from the Artwork gallery/list view so that no deletion control is rendered or usable from the Gallery (artwork cards/grid) UI.",
+      "reqIds": [
+        "REQ-1"
+      ],
       "status": "pending"
     },
     {
-      "id": "AR-5",
-      "summary": "Update backend authorization so that editing an artwork is permitted for the artwork owner as well as admins, while preserving existing security checks for other operations.",
+      "id": "AR-3",
+      "summary": "Ensure the only UI entry point for deleting an artwork is the edit page (UploadView in edit mode) via the existing AdminUploadForm destructive Delete Artwork button; do not add alternate delete controls in the Artwork detail dialog or gallery UI.",
       "reqIds": [
-        "REQ-3"
+        "REQ-2"
       ],
       "status": "pending"
     }
   ],
-  "projectName": "Enable editing of all artwork upload fields and add SOLD watermark display option",
+  "projectName": "Remove duplicate Delete action from Artwork gallery list; keep delete only on edit page",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

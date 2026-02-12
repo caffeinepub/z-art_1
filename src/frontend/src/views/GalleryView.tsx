@@ -13,7 +13,6 @@ import { useState } from 'react';
 interface GalleryViewProps {
   artworks: Artwork[];
   isLoading: boolean;
-  isAdmin: boolean;
   showUploadShortcut: boolean;
   onArtworkClick: (artwork: Artwork) => void;
   soldDisplayMode: SoldDisplayMode;
@@ -23,7 +22,6 @@ interface GalleryViewProps {
 export default function GalleryView({ 
   artworks, 
   isLoading, 
-  isAdmin, 
   showUploadShortcut, 
   onArtworkClick,
   soldDisplayMode,

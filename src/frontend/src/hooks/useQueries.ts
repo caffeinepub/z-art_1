@@ -91,6 +91,25 @@ export function useUpdateArtwork() {
   });
 }
 
+export function useDeleteArtwork() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      if (!actor) throw new Error('Actor not available');
+      await actor.deleteArtwork(id);
+    },
+    onSuccess: async (_, id) => {
+      // Invalidate both the artworks list and the specific artwork query
+      // This ensures the gallery refreshes and the deleted artwork no longer appears
+      await queryClient.invalidateQueries({ queryKey: ['artworks'] });
+      await queryClient.invalidateQueries({ queryKey: ['artwork', id] });
+      await queryClient.refetchQueries({ queryKey: ['artworks'] });
+    },
+  });
+}
+
 export function useSetArtworkSoldStatus() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
@@ -100,8 +119,12 @@ export function useSetArtworkSoldStatus() {
       if (!actor) throw new Error('Actor not available');
       await actor.setArtworkSoldStatus(artworkId, isSold);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['artworks'] });
+    onSuccess: async (_, variables) => {
+      // Invalidate both the artworks list and the specific artwork query
+      await queryClient.invalidateQueries({ queryKey: ['artworks'] });
+      await queryClient.invalidateQueries({ queryKey: ['artwork', variables.artworkId] });
+      // Refetch artworks to ensure UI updates immediately
+      await queryClient.refetchQueries({ queryKey: ['artworks'] });
     },
   });
 }

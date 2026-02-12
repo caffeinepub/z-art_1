@@ -36,6 +36,16 @@ export default function App() {
     }
   }, [isAuthenticated, profileLoading, profileFetched, userProfile]);
 
+  // Update selectedArtwork when artworks list changes (e.g., after sold status update)
+  useEffect(() => {
+    if (selectedArtwork) {
+      const updatedArtwork = artworks.find(a => a.id === selectedArtwork.id);
+      if (updatedArtwork) {
+        setSelectedArtwork(updatedArtwork);
+      }
+    }
+  }, [artworks, selectedArtwork]);
+
   const handleProfileSave = (name: string) => {
     saveProfile({ name }, {
       onSuccess: () => {
@@ -48,6 +58,11 @@ export default function App() {
     setSelectedArtwork(null);
     navigate('upload', { editArtworkId: artwork.id });
   };
+
+  // Determine if current user can edit the selected artwork
+  const canEditSelectedArtwork = selectedArtwork && isAuthenticated && (
+    identity?.getPrincipal().toString() === selectedArtwork.owner.toString() || isAdmin
+  );
 
   // Render appropriate view based on route
   const renderView = () => {
@@ -62,7 +77,6 @@ export default function App() {
       <GalleryView
         artworks={artworks}
         isLoading={artworksLoading}
-        isAdmin={!!isAdmin}
         showUploadShortcut={isAuthenticated}
         onArtworkClick={setSelectedArtwork}
         soldDisplayMode={soldDisplayMode}
@@ -108,22 +122,33 @@ export default function App() {
       {/* Footer */}
       <footer className="relative border-t border-border/40 bg-background/80 backdrop-blur-sm mt-20">
         <div className="container mx-auto px-4 py-8 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()}. Built with ❤️ using <a href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`} target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground transition-colors">caffeine.ai</a></p>
+          <p>
+            © {new Date().getFullYear()} Z'art Gallery. Built with love using{' '}
+            <a
+              href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              caffeine.ai
+            </a>
+          </p>
         </div>
       </footer>
 
-      {/* Artwork detail dialog */}
+      {/* Artwork Detail Dialog */}
       {selectedArtwork && (
         <ArtworkDetailDialog
           artwork={selectedArtwork}
           open={!!selectedArtwork}
           onClose={() => setSelectedArtwork(null)}
-          onEdit={isAuthenticated && (identity?.getPrincipal().toString() === selectedArtwork.owner.toString() || isAdmin) ? handleEditArtwork : undefined}
+          onEdit={canEditSelectedArtwork ? handleEditArtwork : undefined}
+          canToggleSold={canEditSelectedArtwork || undefined}
           soldDisplayMode={soldDisplayMode}
         />
       )}
 
-      {/* Profile setup dialog */}
+      {/* Profile Setup Dialog */}
       <ProfileSetupDialog
         open={showProfileSetup}
         onSave={handleProfileSave}

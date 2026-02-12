@@ -86,7 +86,7 @@ export const idlService = IDL.Service({
   'getArtwork' : IDL.Func([IDL.Text], [IDL.Opt(Artwork)], ['query']),
   'getArtworksByUser' : IDL.Func(
       [IDL.Principal],
-      [IDL.Vec(IDL.Text)],
+      [IDL.Vec(IDL.Tuple(IDL.Text, Artwork))],
       ['query'],
     ),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
@@ -203,7 +203,7 @@ export const idlFactory = ({ IDL }) => {
     'getArtwork' : IDL.Func([IDL.Text], [IDL.Opt(Artwork)], ['query']),
     'getArtworksByUser' : IDL.Func(
         [IDL.Principal],
-        [IDL.Vec(IDL.Text)],
+        [IDL.Vec(IDL.Tuple(IDL.Text, Artwork))],
         ['query'],
       ),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),

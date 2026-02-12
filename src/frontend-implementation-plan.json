@@ -1,101 +1,52 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Artwork edit flow on Upload UI + SOLD watermark display preference",
+  "title": "Remove delete controls from gallery list; keep delete only on edit page",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Add an artwork editing flow that reuses the Upload form UI with an explicit Edit mode, including prefill and optional image replacement.",
+      "summary": "Remove any Delete artwork UI/actions from the gallery artwork grid/list items so deletion cannot be triggered from the gallery route.",
       "acceptanceCriteria": [
-        "From the Gallery, a user can start editing an existing artwork and is taken to the Upload page in an explicit “Edit” mode.",
-        "In Edit mode, the form is pre-filled with the existing artwork title, description, and price.",
-        "In Edit mode, the user can optionally replace the image (including preview, remove/replace behaviors, and client-side optimization).",
-        "Submitting in Edit mode updates the existing artwork and returns the user to the Gallery with the updated values visible without a hard refresh.",
-        "Submitting in Create mode continues to create a new artwork as it does today."
+        "In the GalleryView artwork grid, there is no Delete button/link/menu item for any artwork card.",
+        "GalleryView and any components it renders for list items (e.g., ArtworkCard) do not import or call the delete mutation hook (useDeleteArtwork) or otherwise trigger deletion.",
+        "Manual check: from the gallery route, a user cannot delete an artwork using any visible UI control."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useRoute.ts",
+          "path": "frontend/src/views/GalleryView.tsx",
           "operation": "modify",
-          "description": "Extend hash navigation to support passing/encoding an edit identifier in the upload route (e.g., upload with query params), while preserving existing gallery/upload navigation behavior."
+          "description": "Ensure the GalleryView grid renders artwork cards without any delete affordance (button/link/menu) and without wiring any deletion handler/mutation from the gallery route."
         },
         {
-          "path": "frontend/src/components/ArtworkDetailDialog.tsx",
+          "path": "frontend/src/components/ArtworkCard.tsx",
           "operation": "modify",
-          "description": "Add an authenticated-only “Edit” action to start the edit flow for the currently viewed artwork; wire it to route navigation into Upload in explicit Edit mode."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Wire the ArtworkDetailDialog edit action to navigation into Upload Edit mode and close the dialog; pass authentication/admin/identity context needed to conditionally show the edit affordance. Use the authorization component’s frontend guidance for comparing the current principal with artwork.owner. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/views/UploadView.tsx",
-          "operation": "modify",
-          "description": "Detect whether Upload is in Create vs Edit mode by reading the edit identifier from the URL hash/query, render explicit Edit-mode headings, and pass edit context to the upload form."
-        },
-        {
-          "path": "frontend/src/components/AdminUploadForm.tsx",
-          "operation": "modify",
-          "description": "Refactor the form to support both Create and Edit modes: prefill title/description/price from the existing artwork, display the existing image, and allow optional replace/remove with preview + client-side optimization. Use the blob-storage ExternalBlob capability for images (direct URL preview and byte uploads) and preserve current upload progress handling. Verify the component's usage instructions before implementing."
+          "description": "Ensure ArtworkCard is strictly display + selection (no Delete UI, no delete handler props, no useDeleteArtwork import/call) so gallery list items cannot trigger deletion."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Add a React Query update mutation for artworks and wire Upload/Edit submission to call create vs update with correct cache invalidation and error handling.",
+      "summary": "Keep artwork deletion accessible only from the edit page (UploadView in edit mode) via the existing AdminUploadForm Delete Artwork button; do not add delete controls elsewhere.",
       "acceptanceCriteria": [
-        "A new update mutation exists alongside the existing create mutation in the query layer.",
-        "After a successful update, the artworks list query is invalidated/refetched so edited cards reflect new data.",
-        "Error states during update show an English error toast message and do not clear the form unintentionally."
+        "In edit mode (UploadView with an editArtworkId), AdminUploadForm continues to show exactly one Delete Artwork button and it deletes immediately with no confirmation, then navigates back to the gallery.",
+        "In create mode (UploadView without an editArtworkId), no delete button is shown.",
+        "ArtworkDetailDialog does not render any delete control."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/views/UploadView.tsx",
           "operation": "modify",
-          "description": "Add an updateArtwork mutation hook (alongside create) that calls the backend update capability and invalidates/refetches the artworks list (and any per-artwork cache keys used in the edit flow) after success."
+          "description": "Verify edit vs create mode wiring remains correct: edit mode passes a loaded artwork into AdminUploadForm (enabling exactly one Delete Artwork button); create mode passes no artwork (ensuring no delete UI)."
         },
         {
           "path": "frontend/src/components/AdminUploadForm.tsx",
           "operation": "modify",
-          "description": "Wire form submission to choose the correct mutation (create vs update) based on mode, with cache invalidation-driven UI refresh, and ensure update failures show an English toast without unintentionally clearing user inputs. Use the blob-storage ExternalBlob capability for new image uploads when replacing an image. Verify the component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Add a session-persistent UI preference to display sold artworks as a badge or a diagonal SOLD watermark overlay across gallery cards and the detail dialog.",
-      "acceptanceCriteria": [
-        "The Gallery view provides a clearly labeled control to choose how sold status is displayed (at minimum: Badge vs Watermark).",
-        "When Watermark is selected and an artwork isSold=true, the artwork image shows a large, semi-transparent, diagonal “SOLD” watermark overlay.",
-        "When Badge is selected and an artwork isSold=true, the existing small “SOLD” badge behavior remains.",
-        "The chosen option applies consistently to both the artwork card grid and the artwork detail dialog during the session (and should persist across reloads via local storage or an equivalent frontend-only persistence)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useSoldDisplayPreference.ts",
-          "operation": "create",
-          "description": "Create a small hook to store and retrieve the sold display mode (Badge vs Watermark) using localStorage (or equivalent frontend-only persistence), exposing a setter for UI controls."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Hold the sold display preference at the app level (via the new hook) and pass it down so it applies consistently to Gallery cards and the ArtworkDetailDialog."
-        },
-        {
-          "path": "frontend/src/views/GalleryView.tsx",
-          "operation": "modify",
-          "description": "Add a clearly labeled sold display mode control (Badge vs Watermark) and wire it to the persisted preference; continue to support the existing “Show sold” filter."
-        },
-        {
-          "path": "frontend/src/components/ArtworkCard.tsx",
-          "operation": "modify",
-          "description": "Support rendering sold status as either the existing small SOLD badge or a large semi-transparent diagonal SOLD watermark overlay based on the preference passed from the Gallery/App."
+          "description": "Preserve deletion as the single UI entry point: keep the immediate (no-confirmation) destructive Delete Artwork button rendered only when editing an existing artwork, and ensure successful deletion navigates back to the gallery."
         },
         {
           "path": "frontend/src/components/ArtworkDetailDialog.tsx",
           "operation": "modify",
-          "description": "Match the sold display preference used in the gallery grid: show either the existing SOLD badge or the diagonal watermark overlay on the detail image when isSold=true."
+          "description": "Ensure the artwork detail dialog renders no delete control (no button/link/menu) and does not wire any deletion action; keep only existing non-delete controls such as edit (when allowed) and sold status toggle (when allowed)."
         }
       ]
     }
