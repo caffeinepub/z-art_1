@@ -1,11 +1,23 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
+  "projectStateVersion": 7,
   "summary": "Artwork management app: delete action should exist only on the Artwork edit page (removed entirely from Artwork list view).",
   "architectural_notes": [],
-  "known_issues": [],
+  "known_issues": [
+    "Intermittent deployment failure occurred (\"Live deployment unsuccessful: Deployment error\"); may be platform build/network related and may require retry/redeploy.",
+    "After Version 20 deployment, all previously uploaded artworks disappeared from the gallery and new uploads do not appear; requires rebuild of upload and gallery functionality."
+  ],
   "isFixRequest": true,
-  "existing_features": [],
+  "existing_features": [
+    {
+      "id": "feature-reduce-both-the-visual-size-width-and-height-and-clickable-area-of-the-upload-artwork-button-input-control-on-the-main-upload-page-uploadview-the-button-should-be-noticeably-smaller-than-its-current-dimensions-while-remaining-clearly-visible-and-accessible",
+      "title": "Reduce both the visual size (width and height) and clickable area of the Upload Artwork button/input control on the main upload page (UploadView). The button should be noticeably smaller than its current dimensions while remaining clearly visible and accessible.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    }
+  ],
   "new_feature_requests": [
     {
       "id": "AR-1",
@@ -27,6 +39,36 @@
       "reqIds": [
         "REQ-2"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Remove any Delete artwork control(s) from the Gallery (artwork list/grid) UI so that no delete button/menu item/icon is rendered or usable from the gallery view or artwork cards.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Ensure the Artwork detail dialog does not expose any Delete action; the only UI entry point for deleting an artwork must be the Delete Artwork button in AdminUploadForm when UploadView is in edit mode.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Audit frontend code paths to ensure there is exactly one delete UI control in the entire app (AdminUploadForm in edit mode), and remove any duplicated delete UI that may exist outside the edit form.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Reduce both the visual size and clickable area of the Upload Artwork button/input on the main upload page.",
+      "reqIds": [],
       "status": "pending"
     }
   ],

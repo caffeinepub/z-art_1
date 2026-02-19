@@ -1,11 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Remove duplicate artwork deletion controls from the gallery/list UI and keep deletion available only on the edit page.
+**Goal:** Reduce the size of the Upload Artwork button on the main upload page.
 
 **Planned changes:**
-- Remove any Delete action/control from the GalleryView artwork grid and its list-item components (e.g., artwork cards/menus).
-- Ensure gallery/list components no longer import/call the delete mutation hook or otherwise trigger deletion.
-- Keep the existing single “Delete Artwork” button on the edit page (UploadView in edit mode via AdminUploadForm) as the only deletion entry point, with no delete controls added to the artwork detail dialog.
+- Reduce the width and height of the Upload Artwork button/input control on the main upload page (UploadView)
+- Proportionally reduce the clickable area to match the smaller visual size
+- Ensure the button remains clearly visible and accessible after the size reduction
 
-**User-visible outcome:** Users can no longer delete artworks from the gallery/list view; deletion remains available only from the edit page for an artwork.
+**User-visible outcome:** Users will see a smaller, more compact Upload Artwork button on the main upload page while maintaining full functionality.

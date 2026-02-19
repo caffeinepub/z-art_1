@@ -1,52 +1,22 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove delete controls from gallery list; keep delete only on edit page",
+  "title": "Reduce Upload Artwork button size",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Remove any Delete artwork UI/actions from the gallery artwork grid/list items so deletion cannot be triggered from the gallery route.",
+      "id": "REQ-6",
+      "summary": "Reduce the visual size and clickable area of the Upload Artwork button/input control on UploadView while maintaining visibility and accessibility",
       "acceptanceCriteria": [
-        "In the GalleryView artwork grid, there is no Delete button/link/menu item for any artwork card.",
-        "GalleryView and any components it renders for list items (e.g., ArtworkCard) do not import or call the delete mutation hook (useDeleteArtwork) or otherwise trigger deletion.",
-        "Manual check: from the gallery route, a user cannot delete an artwork using any visible UI control."
+        "The Upload Artwork button/input on the main upload page has reduced width and height compared to the current implementation",
+        "The clickable/interactive area of the upload control is proportionally reduced",
+        "The upload control remains clearly visible and usable after the size reduction",
+        "The size reduction applies only to the main upload page, not to any other upload controls that may exist elsewhere"
       ],
       "file_operations": [
-        {
-          "path": "frontend/src/views/GalleryView.tsx",
-          "operation": "modify",
-          "description": "Ensure the GalleryView grid renders artwork cards without any delete affordance (button/link/menu) and without wiring any deletion handler/mutation from the gallery route."
-        },
-        {
-          "path": "frontend/src/components/ArtworkCard.tsx",
-          "operation": "modify",
-          "description": "Ensure ArtworkCard is strictly display + selection (no Delete UI, no delete handler props, no useDeleteArtwork import/call) so gallery list items cannot trigger deletion."
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Keep artwork deletion accessible only from the edit page (UploadView in edit mode) via the existing AdminUploadForm Delete Artwork button; do not add delete controls elsewhere.",
-      "acceptanceCriteria": [
-        "In edit mode (UploadView with an editArtworkId), AdminUploadForm continues to show exactly one Delete Artwork button and it deletes immediately with no confirmation, then navigates back to the gallery.",
-        "In create mode (UploadView without an editArtworkId), no delete button is shown.",
-        "ArtworkDetailDialog does not render any delete control."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/views/UploadView.tsx",
-          "operation": "modify",
-          "description": "Verify edit vs create mode wiring remains correct: edit mode passes a loaded artwork into AdminUploadForm (enabling exactly one Delete Artwork button); create mode passes no artwork (ensuring no delete UI)."
-        },
         {
           "path": "frontend/src/components/AdminUploadForm.tsx",
           "operation": "modify",
-          "description": "Preserve deletion as the single UI entry point: keep the immediate (no-confirmation) destructive Delete Artwork button rendered only when editing an existing artwork, and ensure successful deletion navigates back to the gallery."
-        },
-        {
-          "path": "frontend/src/components/ArtworkDetailDialog.tsx",
-          "operation": "modify",
-          "description": "Ensure the artwork detail dialog renders no delete control (no button/link/menu) and does not wire any deletion action; keep only existing non-delete controls such as edit (when allowed) and sold status toggle (when allowed)."
+          "description": "Reduce the dimensions of the Upload Artwork button/input control by applying smaller padding, width constraints, and font sizes to the upload control element. Ensure the clickable area is proportionally reduced while maintaining clear visibility and accessibility. Apply size reductions only to the upload control used in the main upload page context, preserving any other upload controls elsewhere in the component unchanged."
         }
       ]
     }

@@ -1,42 +1,36 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-12T18:42:12.675Z",
+  "generatedAt": "2026-02-19T12:17:33.636Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 0,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-1",
-        "summary": "Remove the Delete artwork action(s) from the Artwork gallery/list view so that no deletion control is rendered or usable from the Gallery (artwork cards/grid) UI.",
-        "status": "missing",
+        "id": "REQ-6",
+        "summary": "Reduce both the visual size (width and height) and clickable area of the Upload Artwork button/input control on the main upload page (UploadView). The button should be noticeably smaller than its current dimensions while remaining clearly visible and accessible.",
+        "status": "implemented",
         "plannedFiles": [
-          "frontend/src/views/GalleryView.tsx",
-          "frontend/src/components/ArtworkCard.tsx"
+          "frontend/src/components/AdminUploadForm.tsx"
         ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Ensure the only UI entry point for deleting an artwork is the edit page (UploadView in edit mode) via the existing AdminUploadForm destructive Delete Artwork button; do not add alternate delete controls in the Artwork detail dialog or gallery UI.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/views/UploadView.tsx",
-          "frontend/src/components/AdminUploadForm.tsx",
-          "frontend/src/components/ArtworkDetailDialog.tsx"
-        ],
-        "matchedFiles": []
+        "matchedFiles": [
+          "frontend/src/components/AdminUploadForm.tsx"
+        ]
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
+    "caffeine.lock.json",
     "feature_evidence.json",
+    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/components/AdminUploadForm.tsx",
+    "frontend/src/config.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
