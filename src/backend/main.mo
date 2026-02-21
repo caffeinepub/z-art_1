@@ -1,3 +1,4 @@
+import Array "mo:core/Array";
 import Map "mo:core/Map";
 import Principal "mo:core/Principal";
 import Text "mo:core/Text";
@@ -161,7 +162,7 @@ actor {
       case (?artwork) { artwork };
     };
 
-    if (caller != artwork.owner and not AccessControl.isAdmin(accessControlState, caller)) {
+    if (caller != artwork.owner and not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only artwork owner or admin can delete artworks");
     };
 

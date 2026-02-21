@@ -1,78 +1,26 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
-  "summary": "Artwork management app: delete action should exist only on the Artwork edit page (removed entirely from Artwork list view).",
-  "architectural_notes": [],
-  "known_issues": [
-    "Intermittent deployment failure occurred (\"Live deployment unsuccessful: Deployment error\"); may be platform build/network related and may require retry/redeploy.",
-    "After Version 20 deployment, all previously uploaded artworks disappeared from the gallery and new uploads do not appear; requires rebuild of upload and gallery functionality."
+  "projectStateVersion": 3,
+  "summary": "Art gallery application with image display and artwork information",
+  "architectural_notes": [
+    "Gallery page displays artworks with images filling container width",
+    "Artwork titles displayed directly below images within card layout"
   ],
-  "isFixRequest": true,
+  "known_issues": [],
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-reduce-both-the-visual-size-width-and-height-and-clickable-area-of-the-upload-artwork-button-input-control-on-the-main-upload-page-uploadview-the-button-should-be-noticeably-smaller-than-its-current-dimensions-while-remaining-clearly-visible-and-accessible",
-      "title": "Reduce both the visual size (width and height) and clickable area of the Upload Artwork button/input control on the main upload page (UploadView). The button should be noticeably smaller than its current dimensions while remaining clearly visible and accessible.",
+      "id": "feature-in-the-gallery-page-frontend-src-views-galleryview-tsx-increase-the-image-dimensions-in-the-artwork-cards-to-make-them-significantly-larger-than-the-current-size-while-maintaining-the-list-layout-with-images-filling-their-containers-and-titles-displayed-below-within-the-same-card",
+      "title": "In the Gallery page (frontend/src/views/GalleryView.tsx), increase the image dimensions in the artwork cards to make them significantly larger than the current size while maintaining the list layout with images filling their containers and titles displayed below within the same card",
       "reqIds": [
-        "REQ-6"
+        "REQ-1"
       ],
       "version": 1
     }
   ],
-  "new_feature_requests": [
-    {
-      "id": "AR-1",
-      "summary": "Remove delete option from Artwork list view entirely; keep delete only on Artwork edit page (also remove any duplicated delete actions in list view).",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Remove the Delete artwork action(s) from the Artwork gallery/list view so that no deletion control is rendered or usable from the Gallery (artwork cards/grid) UI.",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Ensure the only UI entry point for deleting an artwork is the edit page (UploadView in edit mode) via the existing AdminUploadForm destructive Delete Artwork button; do not add alternate delete controls in the Artwork detail dialog or gallery UI.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Remove any Delete artwork control(s) from the Gallery (artwork list/grid) UI so that no delete button/menu item/icon is rendered or usable from the gallery view or artwork cards.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Ensure the Artwork detail dialog does not expose any Delete action; the only UI entry point for deleting an artwork must be the Delete Artwork button in AdminUploadForm when UploadView is in edit mode.",
-      "reqIds": [
-        "REQ-4"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Audit frontend code paths to ensure there is exactly one delete UI control in the entire app (AdminUploadForm in edit mode), and remove any duplicated delete UI that may exist outside the edit form.",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "Reduce both the visual size and clickable area of the Upload Artwork button/input on the main upload page.",
-      "reqIds": [],
-      "status": "pending"
-    }
-  ],
-  "projectName": "Remove duplicate Delete action from Artwork gallery list; keep delete only on edit page",
+  "new_feature_requests": [],
+  "gameProjectType": "none",
+  "projectName": "Enlarge gallery images further",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

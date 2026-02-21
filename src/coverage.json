@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-19T12:17:33.636Z",
+  "generatedAt": "2026-02-21T13:30:43.906Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,26 +11,27 @@
     "implemented": 1,
     "items": [
       {
-        "id": "REQ-6",
-        "summary": "Reduce both the visual size (width and height) and clickable area of the Upload Artwork button/input control on the main upload page (UploadView). The button should be noticeably smaller than its current dimensions while remaining clearly visible and accessible.",
+        "id": "REQ-1",
+        "summary": "In the Gallery page (frontend/src/views/GalleryView.tsx), increase the image dimensions in the artwork cards to make them significantly larger than the current size while maintaining the list layout with images filling their containers and titles displayed below within the same card",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/AdminUploadForm.tsx"
+          "frontend/src/components/ArtworkCard.tsx",
+          "frontend/src/views/GalleryView.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/AdminUploadForm.tsx"
+          "frontend/src/components/ArtworkCard.tsx",
+          "frontend/src/views/GalleryView.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/AdminUploadForm.tsx",
-    "frontend/src/config.ts",
+    "frontend/src/components/ArtworkCard.tsx",
+    "frontend/src/views/GalleryView.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

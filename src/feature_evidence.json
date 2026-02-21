@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-reduce-both-the-visual-size-width-and-height-and-clickable-area-of-the-upload-artwork-button-input-control-on-the-main-upload-page-uploadview-the-button-should-be-noticeably-smaller-than-its-current-dimensions-while-remaining-clearly-visible-and-accessible",
-      "featureTitle": "Reduce both the visual size (width and height) and clickable area of the Upload Artwork button/input control on the main upload page (UploadView). The button should be noticeably smaller than its current dimensions while remaining clearly visible and accessible.",
+      "featureId": "feature-in-the-gallery-page-frontend-src-views-galleryview-tsx-increase-the-image-dimensions-in-the-artwork-cards-to-make-them-significantly-larger-than-the-current-size-while-maintaining-the-list-layout-with-images-filling-their-containers-and-titles-displayed-below-within-the-same-card",
+      "featureTitle": "In the Gallery page (frontend/src/views/GalleryView.tsx), increase the image dimensions in the artwork cards to make them significantly larger than the current size while maintaining the list layout with images filling their containers and titles displayed below within the same card",
       "files": [
-        "frontend/src/components/AdminUploadForm.tsx"
+        "frontend/src/components/ArtworkCard.tsx",
+        "frontend/src/views/GalleryView.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,7 +18,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-6"
+        "REQ-1"
       ],
       "confidence": "high"
     }

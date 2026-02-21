@@ -272,7 +272,7 @@ export default function AdminUploadForm({ artwork }: AdminUploadFormProps) {
                   </Button>
                 </div>
               ) : (
-                <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary transition-colors max-w-xs mx-auto">
+                <div className="border-2 border-dashed border-border rounded-lg p-2 text-center hover:border-primary transition-colors max-w-[180px] mx-auto">
                   <input
                     type="file"
                     id="image-upload"
@@ -283,11 +283,11 @@ export default function AdminUploadForm({ artwork }: AdminUploadFormProps) {
                   />
                   <label
                     htmlFor="image-upload"
-                    className="cursor-pointer flex flex-col items-center gap-1.5"
+                    className="cursor-pointer flex flex-col items-center gap-1"
                   >
-                    <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                    <ImageIcon className="h-5 w-5 text-muted-foreground" />
                     <span className="text-xs text-muted-foreground">
-                      Click to upload image
+                      Click to upload
                     </span>
                   </label>
                 </div>

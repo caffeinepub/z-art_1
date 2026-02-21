@@ -1,43 +1,35 @@
 {
   "kind": "build_request",
-  "title": "Reduce Upload Artwork button size",
-  "projectName": "Art Gallery Manager",
+  "title": "Enlarge gallery images further",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-6",
-      "text": "Reduce both the visual size (width and height) and clickable area of the Upload Artwork button/input control on the main upload page (UploadView). The button should be noticeably smaller than its current dimensions while remaining clearly visible and accessible.",
+      "id": "REQ-1",
+      "text": "In the Gallery page (frontend/src/views/GalleryView.tsx), increase the image dimensions in the artwork cards to make them significantly larger than the current size while maintaining the list layout with images filling their containers and titles displayed below within the same card",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-recent-1",
-          "msg-recent-2",
-          "msg-recent-3"
-        ],
-        "quotes": [
-          "Reduce the size of the upload option",
-          "yes the upload Artwork option",
-          "both",
-          "main upload page"
+          "msg-recent"
         ]
       },
       "acceptanceCriteria": [
-        "The Upload Artwork button/input on the main upload page has reduced width and height compared to the current implementation",
-        "The clickable/interactive area of the upload control is proportionally reduced",
-        "The upload control remains clearly visible and usable after the size reduction",
-        "The size reduction applies only to the main upload page, not to any other upload controls that may exist elsewhere"
+        "Images in the gallery list are noticeably larger than the previous version",
+        "Images fill their container width completely",
+        "Artwork titles remain positioned directly below each image within the same card",
+        "List layout is preserved with proper spacing between items"
       ]
     }
   ],
   "constraints": [
-    "Only modify the upload control on the main upload page (UploadView)",
-    "Do not change backend logic or data structures",
-    "Maintain accessibility and usability of the upload control"
+    "Do not change the list layout structure established in previous versions",
+    "Maintain the existing filtering and sold display mode functionality",
+    "Keep artwork titles below images within the same card component"
   ],
   "nonGoals": [
-    "Changing the size of upload controls on other pages or dialogs",
-    "Modifying the upload functionality or file handling logic",
-    "Changing the overall layout or positioning of the upload page"
+    "Changing the gallery layout from list to grid",
+    "Modifying the artwork detail dialog",
+    "Adding new filtering or sorting options",
+    "Changing the backend artwork data structure"
   ],
   "imageRequirements": {
     "required": [],

@@ -1,22 +1,27 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Reduce Upload Artwork button size",
+  "title": "Enlarge gallery images further",
   "requirements": [
     {
-      "id": "REQ-6",
-      "summary": "Reduce the visual size and clickable area of the Upload Artwork button/input control on UploadView while maintaining visibility and accessibility",
+      "id": "REQ-1",
+      "summary": "Increase image dimensions in gallery artwork cards to make them significantly larger while maintaining list layout with images filling containers and titles below",
       "acceptanceCriteria": [
-        "The Upload Artwork button/input on the main upload page has reduced width and height compared to the current implementation",
-        "The clickable/interactive area of the upload control is proportionally reduced",
-        "The upload control remains clearly visible and usable after the size reduction",
-        "The size reduction applies only to the main upload page, not to any other upload controls that may exist elsewhere"
+        "Images in the gallery list are noticeably larger than the previous version",
+        "Images fill their container width completely",
+        "Artwork titles remain positioned directly below each image within the same card",
+        "List layout is preserved with proper spacing between items"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/AdminUploadForm.tsx",
+          "path": "frontend/src/components/ArtworkCard.tsx",
           "operation": "modify",
-          "description": "Reduce the dimensions of the Upload Artwork button/input control by applying smaller padding, width constraints, and font sizes to the upload control element. Ensure the clickable area is proportionally reduced while maintaining clear visibility and accessibility. Apply size reductions only to the upload control used in the main upload page context, preserving any other upload controls elsewhere in the component unchanged."
+          "description": "Increase the image container dimensions by modifying the aspect ratio or height constraints to make images significantly larger. Update the container styling to ensure images fill their width completely while maintaining the card structure with titles positioned below the image. Preserve the existing clickable behavior, SOLD badge/watermark overlays, and responsive design patterns."
+        },
+        {
+          "path": "frontend/src/views/GalleryView.tsx",
+          "operation": "modify",
+          "description": "Adjust the grid or list container styling if needed to accommodate larger artwork cards while maintaining the list layout structure. Ensure proper spacing between enlarged cards and that the filtering controls and sold display mode functionality remain unchanged. Verify that the layout remains responsive and the upload button placement is preserved."
         }
       ]
     }
